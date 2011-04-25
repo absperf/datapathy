@@ -24,7 +24,7 @@ describe 'querying models' do
     test_adapter.clear!
   end
 
-  Spec::Matchers.define :include_records do |*expected_records|
+  RSpec::Matchers.define :include_records do |*expected_records|
     match do |matched_records|
       @expected_records = expected_records
       matched_keys = matched_records.map { |r| r.id }
