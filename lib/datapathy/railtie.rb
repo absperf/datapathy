@@ -16,25 +16,25 @@ module Datapathy
     module ControllerRuntime
       extend ActiveSupport::Concern
 
-      attr_internal :query_runtime
+      attr_internal :request_runtime
 
       def cleanup_view_runtime
-        runtime_before_render = Datapathy::LogSubscriber.reset_runtime
+        runtime_before_request = Datapathy::LogSubscriber.reset_runtime
         runtime = super
-        runtime_after_render = Datapathy::LogSubscriber.reset_runtime
-        self.query_runtime = runtime_before_render + runtime_after_render
-        runtime - runtime_after_render
+        runtime_after_request = Datapathy::LogSubscriber.reset_runtime
+        self.request_runtime = runtime_before_request + runtime_after_request
+        runtime - runtime_after_request
       end
 
       def append_info_to_payload(payload)
         super
-        payload[:query_runtime] = self.query_runtime
+        payload[:request_runtime] = self.request_runtime
       end
 
       module ClassMethods
         def log_process_action(payload)
-          messages, query_runtime = super, payload[:query_runtime]
-          messages << ("Datapathy: %.1fms" % query_runtime.to_f) if query_runtime
+          messages, request_runtime = super, payload[:request_runtime]
+          messages << ("Datapathy: %.1fms" % request_runtime.to_f) if request_runtime
           messages
         end
       end

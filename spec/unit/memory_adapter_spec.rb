@@ -3,6 +3,7 @@ require 'spec_helper'
 describe Datapathy::Adapters::MemoryAdapter do
   before do
     @adapter = Datapathy::Adapters::MemoryAdapter.new
+    @person = Person.new :name => "Paul"
   end
 
   after do
@@ -11,61 +12,62 @@ describe Datapathy::Adapters::MemoryAdapter do
 
   subject { @adapter }
 
-  describe "#post" do
+  describe "#create" do
     before do
-      @resource = @adapter.post("/hosts", {:hostname => "example.com"} )
+      @resource = @adapter.create @person
     end
 
     subject { @resource }
 
     it { should_not be_nil }
-    it { should have_attributes :hostname => "example.com", :href => %r{/hosts/\d+} }
+    it { should have_attributes :name => "Paul", :href => %r{/Person/\d+} }
   end
 
-  describe "#get" do
+  describe "#read" do
     before do
-      @created_resource = @adapter.post("/hosts", {:hostname => "example.com"} )
+      @created_resource = @adapter.create @person
     end
 
     subject { @resource }
 
-    context "single record" do
+    context "a model" do
       before do
-        @href = @created_resource[:href]
-        @resource = @adapter.get(@href)
+        @resource = @adapter.read @person
       end
 
       it { should_not be_nil }
-      it { should have_attributes :href => @href, :hostname => "example.com" }
+      it { should have_attributes :href => @created_resource.href, :name => "Paul" }
     end
 
-    context "collection" do
+    context "a collection" do
       before do
-        @resource = @adapter.get("/hosts")
+        @collection = @adapter.read Datapathy::Collection.new(Person)
       end
 
-      it { should_not be_nil }
-      it { should have_attributes :href => "/hosts", :item_count => 1, :items => Array }
+      subject { @collection }
+
+      it { should_not be_empty }
+      it { should have_attributes :href => "http://example.com/Person" }
     end
   end
 
   describe "#put" do
     before do
-      @original_resource = @adapter.post("/hosts", {:hostname => "example.com"} )
-      attrs = @original_resource.merge(:hostname => "foo.example.com")
-      @resource = @adapter.put(@original_resource[:href], attrs)
+      @original_resource = @adapter.create @person
+      @original_resource.name = "Paul Sadauskas"
+      @resource = @adapter.update @original_resource
     end
 
     subject { @resource }
 
     it { should_not be_nil }
-    it { should have_attributes :hostname => "foo.example.com", :href => @original_resource[:href] }
+    it { should have_attributes :name => "Paul Sadauskas", :href => @original_resource[:href] }
   end
 
   describe "#delete" do
     before do
-      @resource = @adapter.post("/hosts", {:hostname => "example.com"} )
-      @resource = @adapter.delete(@resource[:href])
+      @original_resource = @adapter.create @person
+      @resource = @adapter.delete @person
     end
 
     subject { @resource }
@@ -75,25 +77,33 @@ describe Datapathy::Adapters::MemoryAdapter do
     end
 
     context 'trying to get it later' do
-      before do
-        @resource = @adapter.get(@resource[:href])
+      it do
+        lambda {
+          @adapter.read @person
+        }.should raise_error(Datapathy::RecordNotFound)
       end
-
-      it { should be_nil }
     end
 
   end
 
   RSpec::Matchers.define :have_attributes do |attrs|
     match do |obj|
-      attrs.all? do |k,v|
-        case v
+      attrs.all? do |key, expected_value|
+        value = if obj.respond_to?(key)
+                  obj.send key
+                elsif obj.respond_to?(:[])
+                  obj[key]
+                else
+                  false
+                end
+
+        case expected_value
         when Class
-          obj[k].is_a? v
+          value.is_a? expected_value
         when Regexp
-          obj[k] =~ v
+          value =~ expected_value
         else
-          obj[k] == v
+          value == expected_value
         end
       end
     end

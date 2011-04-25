@@ -2,12 +2,14 @@ require 'active_support/concern'
 require 'active_support/core_ext/class/inheritable_attributes'
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/slice'
+require 'active_support/core_ext/module/attribute_accessors'
 
 require 'active_model'
 
 require 'datapathy/query'
 
 require 'datapathy/model/crud'
+require 'datapathy/model/discovery'
 require 'datapathy/model/dynamic_finders'
 
 module Datapathy::Model
@@ -19,46 +21,48 @@ module Datapathy::Model
   include ActiveModel::Validations
 
   include Datapathy::Model::Crud
+  include Datapathy::Model::Discovery
   include Datapathy::Model::DynamicFinders
 
-  attr_accessor :new_record
+  attr_reader :attributes
 
-  def initialize(attributes = {})
-    @attributes = {}
-    merge(attributes)
+  included do
+    persists :href
+  end
+
+  def initialize(attrs = {})
+    @attributes = HashWithIndifferentAccess.new
+    merge!(attrs)
     @new_record = true
   end
 
-  def persisted_attributes
-    @attributes
+  def [](key)
+    attributes[key]
   end
 
-  def merge(attributes = {})
-    attributes.each do |name, value|
-      method = :"#{name}="
-      send(method, value) if respond_to?(method)
-    end
+  def []=(key, value)
+    attributes[key] = value
   end
 
-  def merge!(attributes = {})
-    @attributes = @attributes || {}
-    @attributes.merge!(attributes)
+  def merge(attrs = {})
+    attributes.merge attrs
   end
 
-  def key
-    send(self.class.key)
-  end
-
-  def key=(value)
-    send(:"#{self.class.key}=", value)
+  def merge!(attrs = {})
+    attributes.merge! attrs
   end
 
   def model
     self.class
   end
 
+  def _type
+    model.to_s
+  end
+  alias type _type
+
   def ==(other)
-    self.key == (other && other.key)
+    self.href == (other && other.href)
   end
 
   def new_record?
@@ -77,18 +81,8 @@ module Datapathy::Model
 
   module ClassMethods
 
-    def new(*attributes)
-      attributes = [{}] if attributes.empty?
-      resources = attributes.map do |attrs|
-        super(attrs)
-      end
-
-      collection = Datapathy::Collection.new(*resources)
-      collection.size == 1 ? collection.first : collection
-    end
-
     def persists(*args)
-      persisted_attributes.push(*args)
+      attributes.push(*args)
       args.each do |name|
         name = name.to_s.gsub(/\?\Z/, '')
         define_getter_method(name)
@@ -99,7 +93,7 @@ module Datapathy::Model
     def define_getter_method(name)
       class_eval <<-CODE
         def #{name}
-          @attributes[:#{name}]
+          attributes[:#{name}]
         end
         alias #{name}? #{name}
       CODE
@@ -108,13 +102,13 @@ module Datapathy::Model
     def define_setter_method(name)
       class_eval <<-CODE
         def #{name}=(val)
-          @attributes[:#{name}] = val
+          attributes[:#{name}] = val
         end
       CODE
     end
 
-    def persisted_attributes
-      @persisted_attributes ||= []
+    def attributes
+      @attributes ||= []
     end
 
     def new_from_attributes(attributes = {})
@@ -124,12 +118,8 @@ module Datapathy::Model
       m
     end
 
-    def key
-      :id
-    end
-
     def adapter
-      @adapter || Datapathy.default_adapter
+      @adapter || Datapathy.adapter
     end
 
     def model

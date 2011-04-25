@@ -9,38 +9,43 @@ module Datapathy::Adapters
       super
     end
 
-    def post(uri, data)
-      href = [uri, id].join('/')
-      resource = {:href => href}.merge(data)
-      records_for(uri)[href] = {:href => href}.merge(data)
-      resource
+    def create(model)
+      model.href ||= generate_href(model)
+      records_for(model)[model.href] = model.attributes
+      model
     end
 
-    def get(uri)
-      if uri.split('/').last =~ /^\d+$/
-        records_for(uri)[uri]
+    def read(model_or_collection)
+      if model_or_collection.is_a? Datapathy::Model
+        model = model_or_collection
+        if attrs = records_for(model)[model.href]
+          model.merge! attrs
+        else
+          raise Datapathy::RecordNotFound
+        end
       else
-        records = records_for(uri)
-        {
-          :href => uri,
+        collection = model_or_collection
+        records = records_for(collection.model).values
+        collection.replace(
+          :href       => "http://example.com/#{collection.model.to_s}",
           :item_count => records.size,
-          :items => records.values
-        }
+          :items      => records
+        )
       end
     end
 
-    def put(uri, data)
-      records_for(uri)[uri] = data
-      data
+    def update(model)
+      records_for(model)[model.href] = model.attributes
+      model
     end
 
-    def delete(uri)
-      records_for(uri).delete(uri)
+    def delete(model)
+      records_for(model).delete(model.href)
+      model
     end
 
-    def records_for(uri)
-      resource = resource_from_uri(uri)
-      datastore[resource]
+    def records_for(model)
+      datastore[model.is_a?(Class) ? model : model.class]
     end
 
     def datastore
@@ -51,19 +56,12 @@ module Datapathy::Adapters
       @datastore = nil
     end
 
-    protected
-
-    def resource_from_uri(uri)
-      parts = uri.split('/')
-      if parts.last =~ /^\d+$/
-        parts[-2]                 # /hosts/123         #=> hosts
-      else
-        parts.last                # /clients/x/hosts   #=> hosts
-      end
-    end
-
-    def id
-      (Time.now.to_f * 1_000_000).to_i
+    def generate_href(model)
+      href = []
+      href << "http://example.com"
+      href << model.class.to_s
+      href << (Time.now.to_f * 1_000_000).to_i
+      href.join('/')
     end
 
   end

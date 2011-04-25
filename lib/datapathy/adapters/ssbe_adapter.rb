@@ -20,43 +20,39 @@ module Datapathy::Adapters
       @username, @password = @options[:username], @options[:password]
 
       @http = Resourceful::HttpAccessor.new
-      @http.logger = @options[:logger] if @options[:logger]
+      @http.logger = @options[:logger] || Datapathy.logger
       @http.cache_manager = Resourceful::InMemoryCacheManager.new
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@username, @password)
     end
 
-    def create(collection)
-      query = collection.query
-      http_resource = http_resource_for(query)
+    def create(model)
+      resource = resource_for(model)
 
-      collection.each do |resource|
-        record = serialize(resource)
-        content_type = content_type_for(resource)
+      record = serialize(model)
+      content_type = content_type_for(model)
 
-        begin
-          response = http_resource.post(record, "Content-Type" => content_type)
-          resource.key = response.header['Location']
-          resource.merge!(deserialize(response)) unless response.body.blank?
-        rescue Resourceful::UnsuccessfulHttpRequestError => e
-          if e.http_response.code == 403
-            set_errors(resource, e)
-          else
-            raise e
-          end
+      begin
+        response = resource.post(record, "Content-Type" => content_type)
+        model.merge!(deserialize(response)) unless response.body.blank?
+      rescue Resourceful::UnsuccessfulHttpRequestError => e
+        if e.http_response.code == 403
+          set_errors(model, e)
+        else
+          raise e
         end
       end
     end
 
-    def read(collection)
-      query = collection.query
-      if query.key_lookup?
-        response = http.resource(query.key, default_headers).get
-        Array.wrap(deserialize(response))
+    def read(model_or_collection)
+      if model_or_collection.is_a? Datapathy::Model
+        model = model_or_collection
+        response = resource_for(model).get
+        model.merge!(deserialize(response))
       else
-        response = http_resource_for(query).get
-        records = deserialize(response)[:items]
-        records.map! { |r| r.symbolize_keys! }
-        records
+        collection = model_or_collection
+        response = resource_for(collection).get
+        records = deserialize(response)
+        collection.replace records
       end
     end
 
@@ -85,7 +81,7 @@ module Datapathy::Adapters
     protected
 
     def deserialize(response)
-      ActiveSupport::JSON.parse(response.body.gsub('\/', '/')).symbolize_keys
+      ActiveSupport::JSON.decode(response.body.gsub('\/', '/')).symbolize_keys
     end
 
     def serialize(resource, attrs_for_update = {})
@@ -94,32 +90,31 @@ module Datapathy::Adapters
       Yajl::Encoder.encode(attrs)
     end
 
-    def http_resource_for(query)
-      model = query.model
-
-      url = if query.respond_to?(:location) && location = query.location
-              location
-            elsif model == ServiceDescriptor
+    def resource_for(model_or_collection)
+      uri = if model_or_collection.respond_to?(:href) && href = model_or_collection.href
+              href
+            elsif model_or_collection.model == ServiceDescriptor
               services_uri
             else
+              model = model_or_collection.model
               service_desc = ServiceDescriptor[model.service_type]
               resource_desc = service_desc.resource_for(model.resource_name)
               resource_desc.href
             end
 
-      raise "Could not identify a location to look for #{model}" unless url
+      raise "Could not identify a location to look for #{model}" unless uri
 
-      http.resource(url, default_headers)
+      http.resource(uri, default_headers)
     end
 
-    def content_type_for(resource)
-      ServiceDescriptor::ServiceIdentifiers[resource.model.service_type].mime_type
+    def content_type_for(model)
+      ServiceDescriptor::ServiceIdentifiers[model.service_type].mime_type
     end
 
-    def set_errors(resource, exception)
+    def set_errors(model, exception)
       errors =  deserialize(exception.http_response)[:errors]
       errors.each do |field, messages|
-        resource.errors[field].push *messages
+        model.errors[field].push *messages
       end
     end
 

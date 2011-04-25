@@ -1,27 +1,14 @@
 class Datapathy::Collection
 
-  attr_reader :query, :model, :adapter
+  attr_reader :query, :model
 
-  # Collection.new(query)
-  # Collection.new(model, ...)
-  # Collection.new(Model, record, ...)
-  def initialize(*elements)
-    if elements.first.is_a?(Datapathy::Query)
-      query = elements.shift
-    elsif elements.first.is_a?(Datapathy::Model)
-      query = Datapathy::Query.new(elements.first.model)
-    elsif elements.first.ancestors.include?(Datapathy::Model)
-      query = Datapathy::Query.new(elements.shift)
-    else
-      raise "First element must be a query, model, or Model class"
-    end
+  attr_accessor :href
 
-    @query, @model, @adapter = query, query.model, query.model.adapter
-    @elements = elements.first.is_a?(Hash) ? Array.wrap(query.model.new(*elements)) : elements
-  end
+  def initialize(model)
+    @model = model
+    @query = Datapathy::Query.new
 
-  def new(*attributes)
-    self.model.new(*attributes)
+    @elements = []
   end
 
   def detect(*attrs, &blk)
@@ -52,34 +39,24 @@ class Datapathy::Collection
     query.limit(count, offset)
   end
 
-  def create(*attributes)
-    query.instrumenter.instrument('query.datapathy', :name => "Create #{model.to_s}", :query => attributes.inspect) do
-      if attributes.empty?
-        adapter.create(self)
-        each { |r| r.new_record = false }
-        size == 1 ? first : self
-      else
-        self.class.new(query, *attributes).create
-      end
-    end
-  end
-
-  def update(attributes = {}, &blk)
-    query.add(&blk)
-    query.instrumenter.instrument('query.datapathy', :name => "Update #{model.to_s}", :query => attributes.inspect) do
-      @elements = query.initialize_resources(adapter.update(attributes, self))
-    end
-  end
-
-  def delete(&blk)
-    query.add(&blk)
-    query.instrumenter.instrument('query.datapathy', :name => "Delete #{model.to_s}", :query => query.to_s) do
-      @elements = query.initialize_resources(adapter.delete(self))
-    end
-  end
-
   def loaded?
     !@elements.empty?
+  end
+
+  def replace(records)
+    elements = records[:items].map { |r| model.new(r) }
+    self.href = records[:href]
+    @elements.replace query.filter elements
+    self
+  end
+
+  def to_a
+    self.load! unless loaded?
+    @elements
+  end
+
+  def load!
+    model.adapter.read(self)
   end
 
   # Since @elements is an array, pretty much every array method should trigger
@@ -94,30 +71,4 @@ class Datapathy::Collection
     EVAL
   end
 
-  def to_a
-    self.load! unless loaded?
-    @elements
-  end
-
-  def load!
-    query.instrumenter.instrument('query.datapathy', :name => "Read #{model.to_s}", :query => query.to_s) do
-      @elements = query.initialize_and_filter(adapter.read(self))
-    end
-  end
-
-  def to_sql(formatter = nil)
-    if any?
-      "(" + collect { |e| e.to_sql(formatter) }.join(', ') + ")"
-    else
-      "(NULL)"
-    end
-  end
-
-  def equality_predicate_sql
-    "IN"
-  end
-
-  def inequality_predicate_sql
-    "NOT IN"
-  end
 end

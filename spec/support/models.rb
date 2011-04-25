@@ -2,7 +2,7 @@
 class Article
   include Datapathy::Model
 
-  persists :id, :title, :text, :published_at
+  persists :title, :text, :published_at
 
   def summary
     text[0,30]
@@ -18,7 +18,7 @@ end
 class Person
   include Datapathy::Model
 
-  persists :id, :name
+  persists :name
 
   validates_presence_of :name
 

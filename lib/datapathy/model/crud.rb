@@ -13,29 +13,42 @@ module Datapathy::Model
     end
 
     def create
-      Datapathy::Collection.new(self).create
+      adapter.create(self)
+      new_record = false
     end
 
     def update
-      Datapathy::Collection.new(self).update(persisted_attributes).first
+      adapter.update(self)
     end
 
     def delete
-      Datapathy::Collection.new(self).delete.first
+      adapter.delete(self)
     end
 
     module ClassMethods
-      def create(*attributes)
-        collection = Datapathy::Collection.new(self, *attributes).create
+
+      def create(attrs = {})
+        model = self.new(attrs)
+        model.save
       end
 
-      def [](value)
-        detect{ |m| m.key == value} || raise(Datapathy::RecordNotFound, "No #{model} found with #{key} `#{value}`")
+      def [](href)
+        model = self.new
+        model.href = href
+        adapter.read(model)
+        model
+      end
+
+      def from(href)
+        Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self.class.to_s) do
+          collection = Datapathy::Collection.new(self)
+          collection.href = href
+          collection
+        end
       end
 
       def select(*attrs, &blk)
-        query = Datapathy::Query.new(model)
-        Datapathy::Collection.new(query).select(*attrs, &blk)
+        Datapathy::Collection.new(self).select(*attrs, &blk)
       end
       alias all select
       alias find_all select
@@ -45,14 +58,6 @@ module Datapathy::Model
       end
       alias first detect
       alias find detect
-
-      def update(attributes, &blk)
-        select(&blk).update(attributes)
-      end
-
-      def delete(&blk)
-        select(&blk).delete
-      end
 
     end
 

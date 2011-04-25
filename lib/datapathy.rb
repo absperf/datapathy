@@ -2,8 +2,11 @@
 # only require the parts of activesupport we want
 require 'active_support/inflector'
 require 'active_support/core_ext/string/inflections'
+require 'logger'
 
 module Datapathy
+
+  class RecordNotFound < StandardError; end
 
   def self.adapters
     @adapters ||= {
@@ -15,9 +18,25 @@ module Datapathy
     adapters[:default]
   end
 
-  class RecordNotFound < StandardError
+  def self.adapter
+    @adapter || adapters[:default]
   end
 
+  def self.adapter= adapter
+    @adapter = adapter
+  end
+
+  def self.instrumenter
+    @instrumenter ||= ActiveSupport::Notifications.instrumenter
+  end
+
+  def self.logger
+    @logger || ::Logger.new(nil)
+  end
+
+  def self.logger= logger
+    @logger = logger
+  end
 end
 
 $:.unshift(File.expand_path(File.dirname(__FILE__))) unless
@@ -30,6 +49,7 @@ require 'datapathy/query'
 require 'datapathy/collection'
 require 'datapathy/adapters/abstract_adapter'
 require 'datapathy/adapters/memory_adapter'
+require 'datapathy/adapters/ssbe_adapter'
 
 if defined?(Rails)
   require 'datapathy/railtie'
