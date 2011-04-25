@@ -29,7 +29,7 @@ module Datapathy::Adapters
     #   The resources that were created. Some data-stores are able to update the
     #   resources, (for example, a Serial column in an RDBMS), and these attributes
     #   should be updated directly on the resources and returned.
-    def create(resources)
+    def post(uri, data)
       raise NotImplementedError, "#{self.class}#create not implemented"
     end
 
@@ -43,7 +43,7 @@ module Datapathy::Adapters
     # @return [Hash]
     #   The records resulting from the retrieval. The keys of the hash MUST be symbols
     #   identical to the names of the attributes of the models.
-    def read(query)
+    def get(uri)
       raise NotImplementedError, "#{self.class}#read not implemented"
     end
 
@@ -60,12 +60,12 @@ module Datapathy::Adapters
     #   from the data-store.
     #
     # @return []
-    def update(attributes, query_or_collection)
+    def update(uri, data)
       raise NotImplementedError, "#{self.class}#update not implemented"
     end
 
     # Deletes existing resources
-    def delete(query_or_collection)
+    def delete(uri)
       raise NotImplementedError, "#{self.class}#delete not implemented"
     end
 

@@ -9,58 +9,38 @@ module Datapathy::Adapters
       super
     end
 
-    def create(collection)
-      collection.map do |resource|
-        if records_for(resource).has_key?(resource.key)
-          resource.errors[resource.model.key] << "Must be unique"
-          resource
-        else
-          records_for(resource)[resource.key] = resource.persisted_attributes
-        end
-      end
+    def post(uri, data)
+      href = [uri, id].join('/')
+      resource = {:href => href}.merge(data)
+      records_for(uri)[href] = {:href => href}.merge(data)
+      resource
     end
 
-    def read(collection)
-      query = collection.query
-      if query.key_lookup?
-        Array.wrap(records_for(query)[query.key])
+    def get(uri)
+      if uri.split('/').last =~ /^\d+$/
+        records_for(uri)[uri]
       else
-        records_for(query).values
+        records = records_for(uri)
+        {
+          :href => uri,
+          :item_count => records.size,
+          :items => records.values
+        }
       end
     end
 
-    def update(attributes, collection)
-      if collection.loaded?
-        collection.map do |resource|
-          records_for(resource)[resource.key] = resource.persisted_attributes.merge(attributes)
-        end
-      else
-        query = collection.query
-
-        query.initialize_and_filter(read(collection)).map do |resource|
-          record = resource.persisted_attributes.merge!(attributes)
-          records_for(query)[resource.key] = record
-        end
-      end
+    def put(uri, data)
+      records_for(uri)[uri] = data
+      data
     end
 
-    def delete(collection)
-      if collection.loaded?
-        collection.map do |resource|
-          records_for(resource).delete(resource.key)
-        end
-      else
-        query = collection.query
-        key = query.model.key
-
-        query.initialize_and_filter(read(collection)).map do |record|
-          records_for(query).delete(record.key)
-        end
-      end
+    def delete(uri)
+      records_for(uri).delete(uri)
     end
 
-    def records_for(resource_or_query)
-      datastore[resource_or_query.model]
+    def records_for(uri)
+      resource = resource_from_uri(uri)
+      datastore[resource]
     end
 
     def datastore
@@ -69,6 +49,21 @@ module Datapathy::Adapters
 
     def clear!
       @datastore = nil
+    end
+
+    protected
+
+    def resource_from_uri(uri)
+      parts = uri.split('/')
+      if parts.last =~ /^\d+$/
+        parts[-2]                 # /hosts/123         #=> hosts
+      else
+        parts.last                # /clients/x/hosts   #=> hosts
+      end
+    end
+
+    def id
+      (Time.now.to_f * 1_000_000).to_i
     end
 
   end
