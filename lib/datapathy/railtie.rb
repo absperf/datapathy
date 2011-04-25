@@ -1,6 +1,4 @@
-require 'rails'
 require 'active_model/railtie'
-
 require 'action_controller/railtie'
 
 module Datapathy
