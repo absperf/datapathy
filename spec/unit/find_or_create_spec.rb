@@ -1,9 +1,9 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 describe "Model.find_or_create_by_foo" do
 
   describe "record exists" do
-    before do 
+    before do
       @article = Article.create(:id => new_uuid,
                                 :title => "FooBar",
                                 :text  => "Original text")
@@ -19,7 +19,7 @@ describe "Model.find_or_create_by_foo" do
   end
 
   describe "record missing" do
-    
+
     it 'should create it' do
       article = Article.find_or_create_by_title(:title => "FooBar",
                                                 :text => "New text")
