@@ -39,6 +39,7 @@ module Datapathy::Model
         adapter.read(model)
         model
       end
+      alias at []
 
       def from(href)
         Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self.class.to_s) do

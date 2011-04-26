@@ -21,8 +21,8 @@ Gem::Specification.new do |s|
   s.add_dependency "railties",      rails_version
   s.add_dependency "resourceful", "~> 1.0"
 
-  s.add_development_dependency "uuidtools", "~> 2.0"
   s.add_development_dependency "rspec", ">= 2.0"
+  s.add_development_dependency "awesome_print"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

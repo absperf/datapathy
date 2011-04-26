@@ -8,6 +8,7 @@ require 'datapathy'
 require 'ssbe/models/core'
 
 require 'pp'
+require 'ap'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
@@ -24,8 +25,9 @@ RSpec.configure do |config|
   config.include(Matchers)
   config.extend(AdapterHelper)
 
-  config.after do
+  config.after :each do
     Datapathy.adapters[:memory].clear!
+    Datapathy.adapters[:default].clear!
   end
 
 end

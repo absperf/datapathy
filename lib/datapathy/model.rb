@@ -11,6 +11,7 @@ require 'datapathy/query'
 require 'datapathy/model/crud'
 require 'datapathy/model/discovery'
 require 'datapathy/model/dynamic_finders'
+require 'datapathy/model/links'
 
 module Datapathy::Model
   extend ActiveSupport::Concern
@@ -23,6 +24,7 @@ module Datapathy::Model
   include Datapathy::Model::Crud
   include Datapathy::Model::Discovery
   include Datapathy::Model::DynamicFinders
+  include Datapathy::Model::Links
 
   attr_reader :attributes
 
@@ -43,13 +45,10 @@ module Datapathy::Model
     attributes[key] = value
   end
 
-  def merge(attrs = {})
-    attributes.merge attrs
-  end
-
   def merge!(attrs = {})
     attributes.merge! attrs
   end
+  alias merge merge!
 
   def model
     self.class
