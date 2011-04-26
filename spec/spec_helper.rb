@@ -19,14 +19,14 @@ Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(:backend => 'ss
                                                                  :username => 'dev',
                                                                  :password => 'dev')
 
-Datapathy.adapter = Datapathy.adapters[:ssbe]
-
 RSpec.configure do |config|
 
   config.include(Matchers)
+  config.extend(AdapterHelper)
 
   config.after do
     Datapathy.adapters[:memory].clear!
   end
 
 end
+
