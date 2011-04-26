@@ -6,15 +6,16 @@ module Datapathy::Model
 
     def save
       if new_record?
-        create()
+        create
       else
-        update()
+        update
       end
     end
 
     def create
       adapter.create(self)
       new_record = false
+      self
     end
 
     def update

@@ -3,51 +3,29 @@ require 'spec_helper'
 describe 'updating models' do
 
   before do
-    @record_a = @record = {:id => new_uuid, :title => "Datapathy is amazing!", :text => "It really is!"}
-    @record_b =           {:id => new_uuid, :title => "Datapathy is awesome!", :text => "Try it today!"}
-    @record_c =           {:id => new_uuid, :title => "Datapathy is awesome!", :text => "Title is same, but text is different"}
-
-    @records = [@record_a, @record_b, @record_c]
-    @records.each do |record|
-      test_adapter.datastore[Article][record[:id]] = record
-    end
+    @record = Article.create :title => "Datapathy is amazing!", :text => "It really is!"
   end
 
-  after do
-    test_adapter.clear!
+  before do
+    @article = Article[@record[:href]]
+    @article.title = "Datapathy is /still/ amazing!"
+    @article.save
   end
 
-  describe 'one at a time' do
-    before do
-      @article = Article[@record[:id]]
+  it 'should update the attributes' do
+    @article.title.should == "Datapathy is /still/ amazing!"
+  end
+
+  it 'should not update other attributes' do
+    expect {
+      @article = Article[@record[:href]]
       @article.title = "Datapathy is /still/ amazing!"
       @article.save
+    }.to_not change {
 
-      @updated_article = Article[@record[:id]]
-    end
+      @article.href
 
-    it 'should update the attributes' do
-      @updated_article.title.should eql(@article.title)
-    end
-
-    it 'should not update other attributes' do
-      @updated_article.id.should eql(@record[:id])
-    end
-  end
-
-  describe 'bulk' do
-
-    it 'should update based on a query' do
-      articles = Article.update(:text => "Updated Text") { |a|
-        a.title == @record_b[:title]
-      }
-
-      articles.each do |article|
-        updated_article = Article[article.id]
-        updated_article.text.should eql("Updated Text")
-      end
-    end
-
+    }
   end
 
 end

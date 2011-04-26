@@ -1,6 +1,9 @@
 
 class Article
   include Datapathy::Model
+  def self.adapter
+    Datapathy.adapters[:memory]
+  end
 
   persists :title, :text, :published_at
 
@@ -17,6 +20,9 @@ end
 
 class Person
   include Datapathy::Model
+  def self.adapter
+    Datapathy.adapters[:memory]
+  end
 
   persists :name
 

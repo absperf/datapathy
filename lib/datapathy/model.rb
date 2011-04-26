@@ -33,7 +33,6 @@ module Datapathy::Model
   def initialize(attrs = {})
     @attributes = HashWithIndifferentAccess.new
     merge!(attrs)
-    @new_record = true
   end
 
   def [](key)
@@ -66,7 +65,7 @@ module Datapathy::Model
   end
 
   def new_record?
-    @new_record
+    !self.href
   end
 
   def adapter
@@ -114,7 +113,6 @@ module Datapathy::Model
     def new_from_attributes(attributes = {})
       m = allocate
       m.merge!(attributes = {})
-      m.new_record = false
       m
     end
 

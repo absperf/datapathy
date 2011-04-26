@@ -13,16 +13,7 @@ require 'pp'
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-module Helpers
-  require 'uuidtools'
-  def new_uuid
-    UUIDTools::UUID.random_create.to_s
-  end
-
-  def test_adapter
-    Datapathy.default_adapter
-  end
-end
+Datapathy.adapters[:memory] = Datapathy::Adapters::MemoryAdapter.new
 
 Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(:backend => 'ssbe.localhost',
                                                                  :username => 'dev',
@@ -32,7 +23,10 @@ Datapathy.adapter = Datapathy.adapters[:ssbe]
 
 RSpec.configure do |config|
 
-  config.include(Helpers)
   config.include(Matchers)
+
+  config.after do
+    Datapathy.adapters[:memory].clear!
+  end
 
 end

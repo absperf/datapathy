@@ -4,8 +4,7 @@ describe "Model.find_or_create_by_foo" do
 
   describe "record exists" do
     before do
-      @article = Article.create(:id => new_uuid,
-                                :title => "FooBar",
+      @article = Article.create(:title => "FooBar",
                                 :text  => "Original text")
     end
 
@@ -28,11 +27,6 @@ describe "Model.find_or_create_by_foo" do
     end
 
   end
-
-  after do
-    test_adapter.clear!
-  end
-
 
 end
 

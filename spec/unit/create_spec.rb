@@ -3,31 +3,38 @@ require 'spec_helper'
 describe "Creating models" do
 
   share_as :CreatingARecord do
+    before do
+      @record = Article[@article.href]
+    end
+
+    it 'should not be a new record anymore' do
+      @article.should_not be_new_record
+    end
+
+    it 'should set the attributes on the model' do
+      @article.title.should == "Datapathy is awesome!"
+      @article.text.should == "It just is!"
+    end
+
+    it 'should generate the href' do
+      @article.href.should_not be_nil
+    end
+
     it 'should create a record' do
-      test_adapter.datastore[Article].should have(1).key
+      @record.should_not be_nil
     end
 
     it 'should store persistable attributes' do
-      record = test_adapter.datastore[Article][@article.id]
-
-      record[:id].should    eql(@article.id)
-      record[:title].should eql(@article.title)
-      record[:text].should  eql(@article.text)
+      @record[:href].should  eql(@article.href)
+      @record[:title].should eql(@article.title)
+      @record[:text].should  eql(@article.text)
     end
 
-    it 'should not store other attributes' do
-      record = test_adapter.datastore[Article][@article.id]
-
-      @article.should respond_to(:summary)
-      record.should_not have_key("summary")
-    end
   end
 
   describe 'Model.create' do
     before do
-      pending
-      @article = Article.create(:id => new_uuid,
-                                :title => "Datapathy is awesome!",
+      @article = Article.create(:title => "Datapathy is awesome!",
                                 :text => "It just is!")
     end
 
@@ -37,35 +44,13 @@ describe "Creating models" do
 
   describe 'Model.new; #save' do
     before do
-      pending
-      @article = Article.new(:id => new_uuid,
-                             :title => "Datapathy is awesome!",
+      @article = Article.new(:title => "Datapathy is awesome!",
                              :text => "It just is!")
       @article.save
     end
 
     it_should_behave_like CreatingARecord
 
-  end
-
-  describe 'Bulk Model.create' do
-    before do
-      pending
-      @articles = Article.create([
-        { :id => new_uuid, :title => "Article A", :text => "Foo"},
-        { :id => new_uuid, :title => "Article B", :text => "Bar"},
-        { :id => new_uuid, :title => "Article C", :text => "Baz"}
-      ])
-    end
-
-    it 'should create the records' do
-      test_adapter.datastore[Article].should have(@articles.size).keys
-    end
-
-  end
-
-  after do
-    test_adapter.clear!
   end
 
 end
