@@ -12,6 +12,7 @@ module AdapterHelper
     end
   end
 
+  RSpec.configure { |c| c.extend self }
 end
 
 

@@ -2,7 +2,7 @@
 p Client.class.ancestors
 Client.blueprint do
   longname    { Faker::Company.name }
-  name        { longname.downcase.gsub(' ', '') }
+  name        { longname.downcase.gsub(/[\s,]/, '') }
   active      { true }
   parent_href { Client::API.href }
 end

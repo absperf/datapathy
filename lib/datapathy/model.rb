@@ -29,7 +29,7 @@ module Datapathy::Model
   attr_reader :attributes
 
   included do
-    persists :href
+    persists :href, :created_at, :updated_at
   end
 
   def initialize(attrs = {})
@@ -85,6 +85,14 @@ module Datapathy::Model
   def valid?
     _run_validate_callbacks if errors.empty?
     errors.empty?
+  end
+
+  def created_at=(iso8601_time)
+    merge :created_at => Time.iso8601(iso8601_time)
+  end
+
+  def updated_at=(iso8601_time)
+    merge :updated_at => Time.iso8601(iso8601_time)
   end
 
   module ClassMethods

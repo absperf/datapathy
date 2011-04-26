@@ -5,6 +5,7 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'datapathy'
 
+require 'faker'
 require 'machinist/datapathy'
 require 'ssbe/models/core'
 require 'ssbe/blueprints'
@@ -23,9 +24,6 @@ Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(:backend => 'ss
                                                                  :password => 'dev')
 
 RSpec.configure do |config|
-
-  config.include(Matchers)
-  config.extend(AdapterHelper)
 
   config.before :each do
     if example.metadata[:adapter] == :memory

@@ -5,16 +5,17 @@ describe Client do
   each_adapter do
 
     describe "creating" do
-
-      it 'should work' do
-        @client = Client.create(:name => "datapathy-test-#{Time.now.to_i}",
-                                :longname => "Datapathy Test #{Time.now.to_i}",
-                                :active => true,
-                                :parent => Client::API)
-
-        @client.should be_valid
-        @client.href.should_not be_nil
+      before do
+        @client = Client.make
       end
+
+      subject { @client }
+
+      it { should_not be_new_record }
+      it { should_not have_errors }
+      it { should have_attribute(:href) }
+      it { should have_attribute(:created_at) }
+
     end
 
   end

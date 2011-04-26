@@ -11,6 +11,8 @@ module Datapathy::Adapters
 
     def create(model)
       model.href ||= generate_href(model)
+      model.created_at = Time.now if model.class.attributes.include?(:created_at)
+      model.updated_at = Time.now if model.class.attributes.include?(:updated_at)
       records_for(model)[model.href] = model.attributes
       model
     end
@@ -36,6 +38,7 @@ module Datapathy::Adapters
 
     def update(model)
       records_for(model)[model.href] = model.attributes
+      model.updated_at = Time.now if model.class.attributes.include?(:updated_at)
       model
     end
 

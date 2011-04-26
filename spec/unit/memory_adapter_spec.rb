@@ -86,26 +86,4 @@ describe Datapathy::Adapters::MemoryAdapter do
 
   end
 
-  RSpec::Matchers.define :have_attributes do |attrs|
-    match do |obj|
-      attrs.all? do |key, expected_value|
-        value = if obj.respond_to?(key)
-                  obj.send key
-                elsif obj.respond_to?(:[])
-                  obj[key]
-                else
-                  false
-                end
-
-        case expected_value
-        when Class
-          value.is_a? expected_value
-        when Regexp
-          value =~ expected_value
-        else
-          value == expected_value
-        end
-      end
-    end
-  end
 end
