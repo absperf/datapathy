@@ -34,7 +34,13 @@ module Datapathy::Model
 
   def initialize(attrs = {})
     @attributes = HashWithIndifferentAccess.new
-    merge!(attrs)
+    attrs.each do |key,val|
+      if respond_to?(:"#{key}=")
+        send(:"#{key}=", val)
+      else
+        attributes[key] = val
+      end
+    end
   end
 
   def [](key)
@@ -69,6 +75,10 @@ module Datapathy::Model
 
   def adapter
     self.class.adapter
+  end
+
+  def inspect
+    "#<#{self.class.to_s}:#{object_id} #{attributes.inspect}>"
   end
 
   #override the ActiveModel::Validations one, because its dumb

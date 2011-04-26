@@ -85,7 +85,7 @@ module Datapathy::Adapters
     end
 
     def serialize(resource, attrs_for_update = {})
-      attrs = resource.persisted_attributes.dup.merge(attrs_for_update)
+      attrs = resource.attributes.dup.merge(attrs_for_update)
       attrs.delete_if { |k,v| v.nil? }
       Yajl::Encoder.encode(attrs)
     end
@@ -115,7 +115,7 @@ module Datapathy::Adapters
       errors =  deserialize(exception.http_response)[:errors]
       errors.each do |field, messages|
         model.errors[field].push *messages
-      end
+      end if errors
     end
 
 

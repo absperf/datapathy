@@ -25,6 +25,13 @@ RSpec.configure do |config|
   config.include(Matchers)
   config.extend(AdapterHelper)
 
+  config.before :each do
+    if example.metadata[:adapter] == :memory
+      Datapathy.adapter = Datapathy.adapters[:memory]
+      api = Client.create(:name => "API", :longname => "Absolute Performance", :active => true)
+    end
+  end
+
   config.after :each do
     Datapathy.adapters[:memory].clear!
     Datapathy.adapters[:default].clear!

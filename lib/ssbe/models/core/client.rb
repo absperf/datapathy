@@ -16,5 +16,12 @@ class Client
     @cache[href]
   end
 
+  def self.const_missing(const)
+    if const == :API
+      find_by_name("API")
+    else
+      super
+    end
+  end
 
 end
