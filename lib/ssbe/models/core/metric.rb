@@ -3,11 +3,12 @@ class Metric < SsbeModel
 
   service_type :measurements
 
-  persists :subject_href, :path, :metric_type, :metric_type_href, :active, :status, :value, :observations_href, :historical_observations_href, :matching_filters_href, :active?
+  persists :path, :metric_type, :active, :status, :value, :historical_observations_href, :active?
 
-  def host
-    @host ||= Host.at(subject_href)
-  end
+  links_to :subject, :class_name => "Host"
+  links_to :metric_type
+  links_to_collection :observations
+  links_to_collection :matching_filters, :class_name => "MetricFilter"
 
   def name
     metric_type["path"]

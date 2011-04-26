@@ -4,11 +4,10 @@ class Client
   service_type :kernel
   resource_name :AllClients
 
-  persists :name, :longname, :active, :parent_href, :hosts_href
+  persists :name, :longname, :active
 
-  def hosts
-    Host.from(hosts_href)
-  end
+  links_to :parent
+  links_to_collection :hosts
 
   def self.by_href(href, reload = nil)
     @cache = nil if reload

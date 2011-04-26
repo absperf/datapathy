@@ -4,9 +4,8 @@ class MetricType < SsbeModel
   service_type :measurements
   resource_name :AllMetricTypes
 
-  persists :name, :path, :stereotype, :metrics_href
+  persists :name, :path, :stereotype
 
-  def metrics
-    Metric.from(:metrics_href)
-  end
+  links_to_collection :metrics
+
 end

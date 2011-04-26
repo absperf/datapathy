@@ -16,9 +16,15 @@ class Account < SsbeModel
            :initial_client_href,
            :initial_role_href
 
-  def self.find_by_login(login)
-    self.detect { |a| a.login == login }
-  end
+  links_to_collection :roles_by_client,      :class_name => "Role"
+  links_to_collection :clients_by_role,      :class_name => "Client"
+  links_to_collection :clients_by_privilege, :class_name => "Privilege"
+  links_to_collection :addresses
+  links_to_collection :role_assignments
+  links_to :preferred_client, :class_name => "Client"
+  links_to :initial_client,   :class_name => "Client"
+  links_to :initial_role,     :class_name => "Role"
+
 
   def md5_auth_credentials
     @md5_auth_credentials ||=
@@ -35,16 +41,8 @@ class Account < SsbeModel
     end
   end
 
-  def clients_by_privilege(privilege)
-    Client.from(clients_by_privilege_href, :privilege_href => privilege.href)
-  end
-
   def has_privilege_at_any_client?(privilege)
     clients_by_privilege(privilege).size > 0
-  end
-
-  def addresses
-    Address.from(addresses_href)
   end
 
 end

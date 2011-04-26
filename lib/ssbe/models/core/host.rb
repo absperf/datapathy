@@ -3,15 +3,10 @@ class Host < SsbeModel
 
   service_type :measurements
 
-  persists :name, :active, :tags, :client_href, :metrics_href
+  persists :name, :active, :tags
 
-  def client
-    Client.at(client_href)
-  end
-
-  def metrics
-    Metric.from(metrics_href)
-  end
+  links_to :client
+  links_to_collection :hosts
 
   def create
     client.hosts.create(self)

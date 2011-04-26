@@ -17,14 +17,14 @@ module Datapathy::Model
 
       def define_link_to(single_or_collection, name, options = {})
         link_name = [name, "href"].join('_').to_sym
-        class_name = name.to_s.classify
+        class_name = options[:class_name] || name.to_s.classify
         lookup_method = single_or_collection == :single ? :at : :from
 
         persists link_name
 
         self.class_eval %{
-          def #{name}
-            @#{name} ||= #{class_name}.#{lookup_method}(#{link_name})
+          def #{name}(params = {})
+            @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
           end
         }
 

@@ -3,17 +3,11 @@ class Address < SsbeModel
   service_type :kernel
   resource_name :AllAddresses
 
-  persists :name, :identifier, :delivery_method, :account_href
+  persists :name, :identifier, :delivery_method
 
   EMAIL_REGEXP = /[A-Z0-9._%+-]+@[A-Z0-9.-]+/i
 
-  def account
-    Account.at(account_href) if account_href
-  end
-
-  def account=(account)
-    self.account_href = account.href
-  end
+  links_to :account
 
   def self.by_href(href, reload = nil)
     @cache = nil if reload

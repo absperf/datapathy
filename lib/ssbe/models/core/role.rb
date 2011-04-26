@@ -4,7 +4,9 @@ class Role < SsbeModel
   service_type :kernel
   resource_name :AllRoles
 
-  persists :name, :slug, :privileges_for_role_href
+  persists :name, :slug
+
+  links_to_collection :privileges_for_role
 
   def self.[](slug)
     self.detect { |r| r.slug == slug.to_s }
@@ -18,7 +20,4 @@ class Role < SsbeModel
     end
   end
 
-  def privileges_for_role
-    PrivilegeForRole.from(privileges_for_role_href)
-  end
 end

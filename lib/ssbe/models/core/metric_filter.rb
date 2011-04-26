@@ -3,7 +3,10 @@ class MetricFilter < SsbeModel
   service_type  :measurements
   resource_name :AllMetricFilters
 
-  persists :purpose, :any_or_all, :criteria, :client_href, :metrics_href
+  persists :purpose, :any_or_all, :criteria
+
+  links_to :client
+  links_to_collection :metrics
 
   validates_presence_of :client_href
   validates_presence_of :purpose, :any_or_all
@@ -11,14 +14,6 @@ class MetricFilter < SsbeModel
 
   validates_presence_of :criteria
   validate :valid_criteria
-
-  def client=(client)
-    self.client_href = client.href
-  end
-
-  def client
-    @client ||= Client.at(client_href) if client_href
-  end
 
   def any?
     any_or_all == "any"
