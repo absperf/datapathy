@@ -1,5 +1,6 @@
 
-class Address < SsbeModel
+class Address
+  include Datapathy::Model
   service_type :kernel
   resource_name :AllAddresses
 

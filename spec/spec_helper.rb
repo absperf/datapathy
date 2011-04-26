@@ -5,7 +5,9 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'datapathy'
 
+require 'machinist/datapathy'
 require 'ssbe/models/core'
+require 'ssbe/blueprints'
 
 require 'pp'
 require 'ap'

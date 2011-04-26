@@ -1,5 +1,6 @@
 
-class Role < SsbeModel
+class Role
+  include Datapathy::Model
 
   service_type :kernel
   resource_name :AllRoles

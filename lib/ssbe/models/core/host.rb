@@ -1,5 +1,6 @@
 
-class Host < SsbeModel
+class Host
+  include Datapathy::Model
 
   service_type :measurements
 

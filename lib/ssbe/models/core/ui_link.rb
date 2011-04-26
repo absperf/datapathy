@@ -1,4 +1,5 @@
-class UiLink < SsbeModel
+class UiLink
+  include Datapathy::Model
   service_type :kernel
   resource_name :AllUiLinks
 

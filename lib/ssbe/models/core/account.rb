@@ -1,4 +1,5 @@
-class Account < SsbeModel
+class Account
+  include Datapathy::Model
 
   service_type :kernel
   resource_name :AllAccounts

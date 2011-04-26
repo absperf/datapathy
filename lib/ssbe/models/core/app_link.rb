@@ -1,4 +1,5 @@
-class AppLink < SsbeModel
+class AppLink
+  include Datapathy::Model
   service_type :kernel
   resource_name :ApplicationLinks
 

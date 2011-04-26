@@ -14,7 +14,6 @@ describe Client do
 
         @client.should be_valid
         @client.href.should_not be_nil
-
       end
     end
 
