@@ -1,4 +1,4 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 require 'active_support/core_ext/array/wrap'
 
@@ -10,25 +10,19 @@ require 'active_support/core_ext/time/calculations'
 describe 'querying models' do
 
   before do
-    @record_a = @record = {:id => new_uuid, :title => "Datapathy is amazing!", :text => "It really is!", :published_at => 2.days.ago }
-    @record_b =           {:id => new_uuid, :title => "Datapathy is awesome!", :text => "Try it today!", :published_at => 1.day.ago }
-    @record_c =           {:id => new_uuid, :title => "Datapathy is awesome!", :text => "Title is same, but text is different", :published_at => 1.minute.ago }
+    @record_a = @record = Article.create( :title => "Datapathy is amazing!", :text => "It really is!", :published_at => 2.days.ago )
+    @record_b =           Article.create( :title => "Datapathy is awesome!", :text => "Try it today!", :published_at => 1.day.ago )
+    @record_c =           Article.create( :title => "Datapathy is awesome!", :text => "Title is same, but text is different", :published_at => 1.minute.ago )
 
     @records = [@record_a, @record_b, @record_c]
-    @records.each do |record|
-      test_adapter.datastore[Article][record[:id]] = record
-    end
   end
 
-  after do
-    test_adapter.clear!
-  end
 
   RSpec::Matchers.define :include_records do |*expected_records|
     match do |matched_records|
       @expected_records = expected_records
-      matched_keys = matched_records.map { |r| r.id }
-      expected_keys = expected_records.map { |r| r[:id] }
+      matched_keys = matched_records.map { |r| r.href }
+      expected_keys = expected_records.map { |r| r[:href] }
       expected_keys.all? { |key| matched_keys.include?(key) }
     end
     failure_message_for_should do |matched_records|
@@ -65,7 +59,6 @@ describe 'querying models' do
 
     end
 
-
   end
 
   describe '{hash}' do
@@ -79,8 +72,8 @@ describe 'querying models' do
     end
 
     it 'should retrieve the correct records' do
-      @articles.map { |a| a.id }.should include(@record_b[:id])
-      @articles.map { |a| a.id }.should include(@record_c[:id])
+      @articles.map { |a| a.href }.should include(@record_b[:href])
+      @articles.map { |a| a.href }.should include(@record_c[:href])
     end
 
   end
