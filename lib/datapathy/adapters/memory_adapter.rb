@@ -22,8 +22,9 @@ module Datapathy::Adapters
         model = model_or_collection
         if attrs = records_for(model)[model.href]
           model.merge! attrs
+          model
         else
-          raise Datapathy::RecordNotFound
+          nil
         end
       else
         collection = model_or_collection

@@ -1,4 +1,4 @@
-class MetricFilterTargets
+class MetricFilterTarget
   include Datapathy::Model
 
   service_type :measurements

@@ -24,7 +24,9 @@ module Datapathy::Model
 
         self.class_eval %{
           def #{name}(params = {})
-            @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
+            unless #{link_name}.nil?
+              @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
+            end
           end
         }
 

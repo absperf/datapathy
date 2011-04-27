@@ -25,11 +25,11 @@ class MetricFilter
   end
 
   def criteria
-    persisted_attributes[:criteria] ||= []
-    if persisted_attributes[:criteria].first.is_a?(Hash)
-      persisted_attributes[:criteria].map!{ |c| Criterion.new(c) }
+    attributes[:criteria] ||= []
+    if attributes[:criteria].first.is_a?(Hash)
+      attributes[:criteria].map!{ |c| Criterion.new(c) }
     end
-    persisted_attributes[:criteria]
+    attributes[:criteria]
   end
 
   def criteria_attributes=(attributes)
@@ -78,7 +78,7 @@ class MetricFilter
     end
 
     def valid_comparisons
-      MetricFilterTargets.all.detect { |comparisons|
+      MetricFilterTarget.all.detect { |comparisons|
         comparisons["target"] == target
       }["valid_comparisons"]
     end
@@ -103,7 +103,7 @@ class MetricFilter
     end
 
     HUMAN_TARGETS = {}.tap do |targets|
-      MetricFilterTargets.all.each { |target|
+      MetricFilterTarget.all.each { |target|
         targets[target[:target]] = target[:name].split('(').first
       }
     end

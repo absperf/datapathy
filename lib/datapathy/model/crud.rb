@@ -34,13 +34,15 @@ module Datapathy::Model
       end
 
       def [](href, params = {})
+        at(href, params = {}) || raise(Datapathy::RecordNotFound)
+      end
+
+      def at(href, params = {})
         model = self.new
         href = Addressable::Template.new(href).expand(params) unless params.empty?
         model.href = href
         adapter.read(model)
-        model
       end
-      alias at []
 
       def from(href, params = {})
         Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self.class.to_s) do

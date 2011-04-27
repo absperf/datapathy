@@ -45,7 +45,7 @@ module Machinist
 
   class SsbeModelAdapter
     def self.has_association?(object, attribute)
-      object.send(attribute).is_a?(Datapathy::Collection)
+      object.respond_to?(:"#{attribute}_href")
     end
 
     def self.class_for_association(object, attribute)

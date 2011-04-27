@@ -78,9 +78,7 @@ describe Datapathy::Adapters::MemoryAdapter do
 
     context 'trying to get it later' do
       it do
-        lambda {
-          @adapter.read @person
-        }.should raise_error(Datapathy::RecordNotFound)
+        @adapter.read(@person).should be_nil
       end
     end
 
