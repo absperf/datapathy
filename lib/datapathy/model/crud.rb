@@ -30,7 +30,7 @@ module Datapathy::Model
 
       def create(attrs = {})
         model = self.new(attrs)
-        model.save
+        model.create
       end
 
       def [](href, params = {})

@@ -27,13 +27,14 @@ module Datapathy::Model
   include Datapathy::Model::Links
 
   attr_reader :attributes
+  attr_accessor :collection
 
   included do
     persists :href, :created_at, :updated_at
   end
 
   def initialize(attrs = {})
-    @attributes = HashWithIndifferentAccess.new
+    @attributes = HashWithIndifferentAccess.new(:_type => _type)
     attrs.each do |key,val|
       if respond_to?(:"#{key}=")
         send(:"#{key}=", val)
@@ -71,6 +72,10 @@ module Datapathy::Model
 
   def new_record?
     !self.href
+  end
+
+  def collection
+    @collection ||= Datapathy::Collection.new(self)
   end
 
   def adapter

@@ -11,6 +11,16 @@ class Datapathy::Collection
     @elements = []
   end
 
+  def href
+    @href ||= ServiceDescriptor.discover(model)
+  end
+
+  def create(attrs = {})
+    resource = model.new(attrs)
+    resource.collection = self
+    resource.create
+  end
+
   def detect(*attrs, &blk)
     slice(0, 1)
     select(*attrs, &blk)

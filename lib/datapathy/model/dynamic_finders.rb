@@ -39,8 +39,7 @@ module Datapathy::Model
             record = detect(find_attributes)
 
             if record.nil?
-              record = self.new(attributes)
-              #{'record.save' if match.instantiator == :create}
+              record = self.#{match.instantiator == :create ? "create" : "new"}(attributes)
             end
 
             record
