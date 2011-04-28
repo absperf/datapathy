@@ -4,22 +4,11 @@ class Account
   service_type :kernel
   resource_name :AllAccounts
 
-  persists :login, :full_name, :time_zone,
-           :password,
-           :roles_by_client_href,
-           :clients_by_role_href,
-           :clients_by_privilege_href,
-           :privileges_by_client_href,
-           :addresses_href,
-           :authentication_credentials_href,
-           :role_assignments_href,
-           :preferred_client_href,
-           :initial_client_href,
-           :initial_role_href
+  persists :login, :full_name, :time_zone, :password
 
   links_to_collection :roles_by_client,      :class_name => "Role"
   links_to_collection :clients_by_role,      :class_name => "Client"
-  links_to_collection :clients_by_privilege, :class_name => "Privilege"
+  links_to_collection :clients_by_privilege, :class_name => "Client"
   links_to_collection :addresses
   links_to_collection :role_assignments
   links_to :preferred_client, :class_name => "Client"
