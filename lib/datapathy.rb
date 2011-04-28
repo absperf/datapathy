@@ -6,7 +6,16 @@ require 'logger'
 
 module Datapathy
 
-  class RecordNotFound < StandardError; end
+  class RecordNotFound < Exception; end
+  class RecordInvalid < Exception
+    attr_reader :record, :errors
+    def initialize(record)
+      @record = record
+      @errors = record.errors
+      messages = errors.full_messages.join(', ')
+      super(messages)
+    end
+  end
 
   def self.adapters
     @adapters ||= {

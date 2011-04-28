@@ -1,3 +1,4 @@
+require 'addressable/template'
 
 module Datapathy::Model
   module Crud
@@ -14,6 +15,7 @@ module Datapathy::Model
 
     def create
       adapter.create(self)
+      raise Datapathy::RecordInvalid, self unless valid?
       new_record = false
       self
     end

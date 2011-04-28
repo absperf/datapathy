@@ -3,14 +3,13 @@ Client.blueprint do
   longname    { Faker::Company.name }
   name        { longname.downcase.gsub(/[\s,]/, '') }
   active      { true }
-  parent_href { Client::API.href }
+  parent      { Client::API }
 end
 
 Client.blueprint(:parent_client) do
   name        { "alarmtest" }
   longname    { "Alarm Test Client" }
   active      { true }
-  parent_href { Client::API.href }
 end
 
 def parent_client
@@ -21,7 +20,7 @@ Client.blueprint(:child_client) do
   name        { "alarmtestchild" }
   longname    { "Alarm Test Child Client" }
   active      { true }
-  parent_href { parent_client.href }
+  parent      { parent_client }
 end
 
 def child_client
@@ -32,7 +31,6 @@ Client.blueprint(:other_client) do
   name        { "alarmtestother" }
   longname    { "Alarm Test Other Client" }
   active      { true }
-  parent_href { Client::API.href }
 end
 
 def other_client
@@ -44,12 +42,17 @@ Host.blueprint do
   name        { Faker::Internet.domain_name }
 end
 
+def create_host(*args)
+  client = Host.plan(*args)[:client]
+  client.hosts.create(Host.plan(*args))
+end
+
 MetricType.blueprint do
   path        { Faker::Lorem.words(5).join('|') }
 end
 
 Metric.blueprint do
-  subject      { Host.make }
+  host         { Host.make }
   path         { Faker::Lorem.words(5).join('|') }
 end
 

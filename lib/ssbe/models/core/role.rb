@@ -26,7 +26,6 @@ class Role
 
     attrs[:privileges].map do |privilege_name|
       privilege = Privilege.find_or_create_by_name(:name => privilege_name)
-      p privilege
       role.add_privileges privilege unless role.privileges_for_role.include?(privilege)
     end
 

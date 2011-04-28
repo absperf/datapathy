@@ -29,6 +29,7 @@ RSpec.configure do |config|
     if example.metadata[:adapter] == :memory
       Datapathy.adapter = Datapathy.adapters[:memory]
       api = Client.create(:name => "API", :longname => "Absolute Performance", :active => true)
+      make_metric_filter_targets
     end
   end
 
