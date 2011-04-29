@@ -28,6 +28,10 @@ module Datapathy::Adapters
         if attrs = records_for(model)[model.href]
           model.merge! attrs
           model
+        elsif attrs = datastore.values.detect { |hsh| hsh.has_key?(model.href) }[model.href]
+          # If we didnt find it in our normal collection, search the whole data store
+          model.merge! attrs
+          model
         else
           nil
         end
