@@ -1,5 +1,6 @@
 
-class MetricType < SsbeModel
+class MetricType
+  include Datapathy::Model
 
   service_type :measurements
   resource_name :AllMetricTypes

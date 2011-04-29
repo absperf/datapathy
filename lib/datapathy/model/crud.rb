@@ -1,3 +1,4 @@
+require 'addressable/template'
 
 module Datapathy::Model
   module Crud
@@ -13,42 +14,51 @@ module Datapathy::Model
     end
 
     def create
-      adapter.create(self)
-      new_record = false
-      self
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self, :action => :create) do
+        adapter.create(self)
+        raise Datapathy::RecordInvalid, self unless valid?
+        new_record = false
+        self
+      end
     end
 
     def update
-      adapter.update(self)
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self, :action => :update) do
+        adapter.update(self)
+      end
     end
 
     def delete
-      adapter.delete(self)
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :action => :delete) do
+        adapter.delete(self)
+      end
     end
 
     module ClassMethods
 
       def create(attrs = {})
         model = self.new(attrs)
-        model.save
+        model.create
       end
 
       def [](href, params = {})
+        at(href, params = {}) || raise(Datapathy::RecordNotFound)
+      end
+
+      def at(href, params = {})
         model = self.new
         href = Addressable::Template.new(href).expand(params) unless params.empty?
         model.href = href
-        adapter.read(model)
-        model
+        Datapathy.instrumenter.instrument('request.datapathy', :href => href, :action => :read) do
+          adapter.read(model)
+        end
       end
-      alias at []
 
       def from(href, params = {})
-        Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self.class.to_s) do
-          collection = Datapathy::Collection.new(self)
-          href = Addressable::Template.new(href).expand(params) unless params.empty?
-          collection.href = href
-          collection
-        end
+        collection = Datapathy::Collection.new(self)
+        href = Addressable::Template.new(href).expand(params) unless params.empty?
+        collection.href = href
+        collection
       end
 
       def select(*attrs, &blk)

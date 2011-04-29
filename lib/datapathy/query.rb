@@ -19,8 +19,10 @@ class Datapathy::Query
   end
 
   def add_conditions_hash(conditions = {})
-    conditions.each do |k,v|
-      add_conditions { |q| q.send(k) == v }
+    conditions.each do |key, value|
+      # TODO: more typecasting (dates, etc)
+      value = value.is_a?(Symbol) ? value.to_s : value
+      add_conditions { |q| q.send(key) == value }
     end
   end
 

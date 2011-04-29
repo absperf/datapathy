@@ -27,13 +27,14 @@ module Datapathy::Model
   include Datapathy::Model::Links
 
   attr_reader :attributes
+  attr_accessor :collection
 
   included do
-    persists :href
+    persists :href, :created_at, :updated_at
   end
 
   def initialize(attrs = {})
-    @attributes = HashWithIndifferentAccess.new
+    @attributes = HashWithIndifferentAccess.new(:_type => _type)
     attrs.each do |key,val|
       if respond_to?(:"#{key}=")
         send(:"#{key}=", val)
@@ -52,7 +53,13 @@ module Datapathy::Model
   end
 
   def merge!(attrs = {})
-    attributes.merge! attrs
+    attrs.each do |key,val|
+      if respond_to?(:"#{key}=")
+        send(:"#{key}=", val)
+      else
+        attributes[key] = val
+      end
+    end
   end
   alias merge merge!
 
@@ -73,6 +80,10 @@ module Datapathy::Model
     !self.href
   end
 
+  def collection
+    @collection ||= Datapathy::Collection.new(self)
+  end
+
   def adapter
     self.class.adapter
   end
@@ -85,6 +96,14 @@ module Datapathy::Model
   def valid?
     _run_validate_callbacks if errors.empty?
     errors.empty?
+  end
+
+  def created_at=(iso8601_time)
+    merge :created_at => Time.iso8601(iso8601_time)
+  end
+
+  def updated_at=(iso8601_time)
+    merge :updated_at => Time.iso8601(iso8601_time)
   end
 
   module ClassMethods

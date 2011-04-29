@@ -26,9 +26,8 @@ module Datapathy::Adapters
     end
 
     def create(model)
-      resource = resource_for(model)
-
-      record = serialize(model)
+      resource     = resource_for(model)
+      record       = serialize(model)
       content_type = content_type_for(model)
 
       begin
@@ -48,6 +47,7 @@ module Datapathy::Adapters
         model = model_or_collection
         response = resource_for(model).get
         model.merge!(deserialize(response))
+        model
       else
         collection = model_or_collection
         response = resource_for(collection).get
@@ -56,20 +56,19 @@ module Datapathy::Adapters
       end
     end
 
-    def update(attributes, collection)
-      collection.each do |resource|
-        content = serialize(resource, attributes)
-        content_type = content_type_for(resource)
+    def update(model)
+      resource     = resource_for(model)
+      record       = serialize(model)
+      content_type = content_type_for(model)
 
-        begin
-          response = http.resource(resource.href, default_headers).put(content, "Content-Type" => content_type)
-          resource.merge!(deserialize(response)) unless response.body.blank?
-        rescue Resourceful::UnsuccessfulHttpRequestError => e
-          if e.http_response.code == 403
-            set_errors(resource, e)
-          else
-            raise e
-          end
+      begin
+        response = resource.put(record, "Content-Type" => content_type)
+        model.merge!(deserialize(response)) unless response.body.blank?
+      rescue Resourceful::UnsuccessfulHttpRequestError => e
+        if e.http_response.code == 403
+          set_errors(model, e)
+        else
+          raise e
         end
       end
     end
@@ -91,24 +90,21 @@ module Datapathy::Adapters
     end
 
     def resource_for(model_or_collection)
-      uri = if model_or_collection.respond_to?(:href) && href = model_or_collection.href
-              href
-            elsif model_or_collection.model == ServiceDescriptor
+      uri = if model_or_collection.model == ServiceDescriptor
               services_uri
-            else
-              model = model_or_collection.model
-              service_desc = ServiceDescriptor[model.service_type]
-              resource_desc = service_desc.resource_for(model.resource_name)
-              resource_desc.href
+            elsif model_or_collection.respond_to?(:href) && href = model_or_collection.href
+              href
+            elsif model_or_collection.respond_to?(:collection) && collection = model_or_collection.collection
+              collection.href
             end
 
-      raise "Could not identify a location to look for #{model}" unless uri
+      raise "Could not identify a location to look for #{model_or_collection}" unless uri
 
       http.resource(uri, default_headers)
     end
 
     def content_type_for(model)
-      ServiceDescriptor::ServiceIdentifiers[model.service_type].mime_type
+      ServiceDescriptor::ServiceIdentifiers[model._service_type].mime_type
     end
 
     def set_errors(model, exception)

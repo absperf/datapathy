@@ -11,6 +11,16 @@ class Datapathy::Collection
     @elements = []
   end
 
+  def href
+    @href ||= ServiceDescriptor.discover(model)
+  end
+
+  def create(attrs = {})
+    resource = model.new(attrs)
+    resource.collection = self
+    resource.create
+  end
+
   def detect(*attrs, &blk)
     slice(0, 1)
     select(*attrs, &blk)
@@ -56,7 +66,9 @@ class Datapathy::Collection
   end
 
   def load!
-    model.adapter.read(self)
+    Datapathy.instrumenter.instrument('request.datapathy', :href => @href || model && model.resource_name, :action => :read) do
+      model.adapter.read(self)
+    end
   end
 
   # Since @elements is an array, pretty much every array method should trigger

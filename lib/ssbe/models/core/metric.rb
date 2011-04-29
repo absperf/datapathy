@@ -1,11 +1,12 @@
 
-class Metric < SsbeModel
+class Metric
+  include Datapathy::Model
 
   service_type :measurements
 
   persists :path, :metric_type, :active, :status, :value, :historical_observations_href, :active?
 
-  links_to :subject, :class_name => "Host"
+  links_to :host
   links_to :metric_type
   links_to_collection :observations
   links_to_collection :matching_filters, :class_name => "MetricFilter"
@@ -14,8 +15,10 @@ class Metric < SsbeModel
     metric_type["path"]
   end
 
-  def create
-    host.metrics.create(self)
+  def self.make(*args)
+    attrs = plan(*args)
+    host = attrs[:host]
+    host.metrics.create(attrs)
   end
 
 end

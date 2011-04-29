@@ -24,4 +24,11 @@ class Client
     end
   end
 
+  def and_children
+    [
+      self,
+      Client.find_all_by_parent_href(href).map { |child| child.and_children }
+    ].flatten.compact.uniq
+  end
+
 end

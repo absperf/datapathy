@@ -5,6 +5,10 @@ module Datapathy::Model
 
     module ClassMethods
 
+      def links
+        @links ||= []
+      end
+
       def links_to(name, options = {})
         define_link_to :single, name, options
       end
@@ -22,20 +26,28 @@ module Datapathy::Model
 
         persists link_name
 
-        self.class_eval %{
+        links << link_name
+
+        self.class_eval <<-CODE, __FILE__, __LINE__
           def #{name}(params = {})
-            @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
+            unless #{link_name}.nil?
+              if params.is_a? Datapathy::Model
+                param_name = params.model.to_s.underscore.singularize + "_href"
+                params = {param_name => params.href}
+              end
+              @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
+            end
           end
-        }
+        CODE
 
         if single_or_collection == :single
-          self.class_eval %{
+          self.class_eval <<-CODE, __FILE__, __LINE__
             def #{name}=(resource)
               @#{name} = resource
               merge(:#{link_name} => resource.href)
               resource
             end
-          }
+          CODE
         end
 
       end

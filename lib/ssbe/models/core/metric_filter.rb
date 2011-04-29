@@ -1,5 +1,6 @@
 
-class MetricFilter < SsbeModel
+class MetricFilter
+  include Datapathy::Model
   service_type  :measurements
   resource_name :AllMetricFilters
 
@@ -24,11 +25,11 @@ class MetricFilter < SsbeModel
   end
 
   def criteria
-    persisted_attributes[:criteria] ||= []
-    if persisted_attributes[:criteria].first.is_a?(Hash)
-      persisted_attributes[:criteria].map!{ |c| Criterion.new(c) }
+    attributes[:criteria] ||= []
+    if attributes[:criteria].first.is_a?(Hash)
+      attributes[:criteria].map!{ |c| Criterion.new(c) }
     end
-    persisted_attributes[:criteria]
+    attributes[:criteria]
   end
 
   def criteria_attributes=(attributes)
@@ -41,22 +42,12 @@ class MetricFilter < SsbeModel
     self.criteria = criteria
   end
 
-  def self.targets
-    @targets ||= JSON.parse(targets_json).with_indifferent_access[:items]
-  end
-
   protected
 
   def valid_criteria
     criteria.each do |c|
       errors.add(:criteria, :invalid) unless c.valid?
     end
-  end
-
-  def self.targets_json
-    url = ServiceDescriptor[:measurements].resource_for("AllMetricFilterTargets").href
-    response = adapter.http.resource(url).get(:accept => ServiceDescriptor::ServiceIdentifiers[:measurements].mime_type)
-    response.body
   end
 
   class Criterion
@@ -87,7 +78,7 @@ class MetricFilter < SsbeModel
     end
 
     def valid_comparisons
-      MetricFilter.targets.detect { |comparisons|
+      MetricFilterTarget.all.detect { |comparisons|
         comparisons["target"] == target
       }["valid_comparisons"]
     end
@@ -112,7 +103,7 @@ class MetricFilter < SsbeModel
     end
 
     HUMAN_TARGETS = {}.tap do |targets|
-      MetricFilter.targets.each { |target|
+      MetricFilterTarget.all.each { |target|
         targets[target[:target]] = target[:name].split('(').first
       }
     end

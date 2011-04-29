@@ -5,7 +5,10 @@ $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'datapathy'
 
+require 'faker'
+require 'machinist/datapathy'
 require 'ssbe/models/core'
+require 'ssbe/blueprints'
 
 require 'pp'
 require 'ap'
@@ -22,13 +25,11 @@ Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(:backend => 'ss
 
 RSpec.configure do |config|
 
-  config.include(Matchers)
-  config.extend(AdapterHelper)
-
   config.before :each do
     if example.metadata[:adapter] == :memory
       Datapathy.adapter = Datapathy.adapters[:memory]
       api = Client.create(:name => "API", :longname => "Absolute Performance", :active => true)
+      make_metric_filter_targets
     end
   end
 

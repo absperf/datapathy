@@ -1,5 +1,6 @@
 
-class PrivilegeForRole < SsbeModel
+class PrivilegeForRole
+  include Datapathy::Model
 
   service_type :kernel
 
