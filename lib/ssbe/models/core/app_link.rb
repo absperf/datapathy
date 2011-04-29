@@ -6,8 +6,8 @@ class AppLink
   persists :slug, :title, :target, :order, :pages, :icon_name
 
   def self.register(attrs = {})
-    resource = ServiceDescriptor[service_type].resource_for("RegisterApplicationLink")
-    self.create(attrs.merge(:href => resource.href))
+    uri = ServiceDescriptor.discover(:kernel, "RegisterApplicationLink")
+    self.create(attrs.merge(:href => uri))
   end
 end
 

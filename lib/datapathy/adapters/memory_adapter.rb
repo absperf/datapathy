@@ -7,6 +7,7 @@ module Datapathy::Adapters
 
     def initialize(options = {})
       super
+      clear!
     end
 
     def create(model)
@@ -15,7 +16,7 @@ module Datapathy::Adapters
       model.created_at = Time.now if model.class.attributes.include?(:created_at)
       model.updated_at = Time.now if model.class.attributes.include?(:updated_at)
       model.class.links.each do |link_name|
-        model.attributes[link_name] = "#{href}/#{link_name}"
+        model.attributes[link_name] ||= "#{href}/#{link_name}"
       end
       records_for(model)[model.href] = model.attributes
       model
@@ -32,7 +33,7 @@ module Datapathy::Adapters
         end
       else
         collection = model_or_collection
-        records = records_for(collection.model).values
+        records = records_for(collection).values
         collection.replace(
           :href       => "http://example.com/#{collection.model.to_s}",
           :item_count => records.size,
@@ -52,8 +53,31 @@ module Datapathy::Adapters
       model
     end
 
-    def records_for(model)
-      datastore[model.is_a?(Class) ? model : model.class]
+    def records_for(model_or_collection)
+      key = key_for(model_or_collection)
+      datastore[key]
+    end
+
+    def key_for(model_or_collection)
+      if model_or_collection.is_a?(Datapathy::Collection)
+        collection = model_or_collection
+        if href = collection.instance_variable_get(:@href)
+          href.to_s
+        else
+          key_for(collection.model)
+        end
+      else
+        model = model_or_collection
+        if model.respond_to?(:collection) and href = model.collection.instance_variable_get(:@href)
+          # instance_variable_get because #href triggers discovery
+          href.to_s
+        elsif model.respond_to?(:resource_name)
+          model.resource_name
+        else
+          model
+        end
+      end
+
     end
 
     def datastore
@@ -62,6 +86,8 @@ module Datapathy::Adapters
 
     def clear!
       @datastore = nil
+      api_href = "http://example.com/clients/API"
+      records_for(Client)[api_href] = {:href => api_href, :name => "API", :longname => "Absolute Performance, Inc", :active => true}
     end
 
     def generate_href(model)

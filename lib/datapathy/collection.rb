@@ -66,7 +66,9 @@ class Datapathy::Collection
   end
 
   def load!
-    model.adapter.read(self)
+    Datapathy.instrumenter.instrument('request.datapathy', :href => @href || model && model.resource_name, :action => :read) do
+      model.adapter.read(self)
+    end
   end
 
   # Since @elements is an array, pretty much every array method should trigger

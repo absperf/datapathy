@@ -14,18 +14,24 @@ module Datapathy::Model
     end
 
     def create
-      adapter.create(self)
-      raise Datapathy::RecordInvalid, self unless valid?
-      new_record = false
-      self
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self, :action => :create) do
+        adapter.create(self)
+        raise Datapathy::RecordInvalid, self unless valid?
+        new_record = false
+        self
+      end
     end
 
     def update
-      adapter.update(self)
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self, :action => :update) do
+        adapter.update(self)
+      end
     end
 
     def delete
-      adapter.delete(self)
+      Datapathy.instrumenter.instrument('request.datapathy', :href => href, :action => :delete) do
+        adapter.delete(self)
+      end
     end
 
     module ClassMethods
@@ -43,16 +49,16 @@ module Datapathy::Model
         model = self.new
         href = Addressable::Template.new(href).expand(params) unless params.empty?
         model.href = href
-        adapter.read(model)
+        Datapathy.instrumenter.instrument('request.datapathy', :href => href, :action => :read) do
+          adapter.read(model)
+        end
       end
 
       def from(href, params = {})
-        Datapathy.instrumenter.instrument('request.datapathy', :href => href, :model => self.class.to_s) do
-          collection = Datapathy::Collection.new(self)
-          href = Addressable::Template.new(href).expand(params) unless params.empty?
-          collection.href = href
-          collection
-        end
+        collection = Datapathy::Collection.new(self)
+        href = Addressable::Template.new(href).expand(params) unless params.empty?
+        collection.href = href
+        collection
       end
 
       def select(*attrs, &blk)

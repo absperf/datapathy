@@ -10,6 +10,7 @@ Client.blueprint(:parent_client) do
   name        { "alarmtest" }
   longname    { "Alarm Test Client" }
   active      { true }
+  parent      { Client::API }
 end
 
 def parent_client
@@ -31,6 +32,7 @@ Client.blueprint(:other_client) do
   name        { "alarmtestother" }
   longname    { "Alarm Test Other Client" }
   active      { true }
+  parent      { Client::API }
 end
 
 def other_client
