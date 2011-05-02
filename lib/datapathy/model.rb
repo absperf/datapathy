@@ -18,6 +18,7 @@ module Datapathy::Model
   extend ActiveModel::Naming
 
   include ActiveModel::Conversion
+  include ActiveModel::Serialization
 
   include ActiveModel::Validations
 
@@ -104,6 +105,14 @@ module Datapathy::Model
 
   def updated_at=(iso8601_time)
     merge :updated_at => Time.iso8601(iso8601_time)
+  end
+
+  def serializable_hash(options = nil)
+    attributes
+  end
+
+  def as_json(*a)
+    serializable_hash(*a)
   end
 
   module ClassMethods

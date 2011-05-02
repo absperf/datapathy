@@ -65,6 +65,10 @@ class Datapathy::Collection
     @elements
   end
 
+  def to_json
+    to_a.to_json
+  end
+
   def load!
     Datapathy.instrumenter.instrument('request.datapathy', :href => @href || model && model.resource_name, :action => :read) do
       model.adapter.read(self)
