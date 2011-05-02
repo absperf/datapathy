@@ -55,12 +55,14 @@ module Datapathy::Model
 
   def merge!(attrs = {})
     attrs.each do |key,val|
-      if respond_to?(:"#{key}=")
-        send(:"#{key}=", val)
+      assigner = :"#{key}="
+      if respond_to?(assigner)
+        send(assigner, val)
       else
         attributes[key] = val
       end
     end
+    self
   end
   alias merge merge!
 
