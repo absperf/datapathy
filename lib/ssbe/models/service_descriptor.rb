@@ -47,7 +47,8 @@ class ServiceDescriptor
   end
 
   def self.discover(model_or_service_type, resource_name = nil)
-    if model_or_service_type.is_a?(Datapathy::Model) || model_or_service_type.ancestors.include?(Datapathy::Model)
+    if model_or_service_type.is_a?(Datapathy::Model) ||
+      (model_or_service_type.respond_to?(:ancestors) && model_or_service_type.ancestors.include?(Datapathy::Model))
       service_type  = model_or_service_type._service_type
       resource_name = model_or_service_type._resource_name
     else
