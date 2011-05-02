@@ -41,7 +41,7 @@ end
 
 Host.blueprint do
   client      { parent_client }
-  name        { Faker::Internet.domain_name }
+  name        { "example-#{Time.now.to_f}.com" }
 end
 
 def create_host(*args)
