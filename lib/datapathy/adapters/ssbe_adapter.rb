@@ -21,7 +21,7 @@ module Datapathy::Adapters
 
       @http = Resourceful::HttpAccessor.new
       @http.logger = @options[:logger] || Datapathy.logger
-      @http.cache_manager = Resourceful::InMemoryCacheManager.new
+      @http.cache_manager = Resourceful::InMemoryCacheManager.new unless @options[:disable_cache]
       @http.add_authenticator Resourceful::SsbeAuthenticator.new(@username, @password)
     end
 
