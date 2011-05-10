@@ -94,18 +94,25 @@ class MetricFilter
     def new_record?; false; end
     def persisted?;  false;  end
 
+    def self.const_missing(const)
+      if const == :HUMAN_TARGETS
+        human_targets = {}.tap do |targets|
+          MetricFilterTarget.all.each { |target|
+            targets[target[:target]] = target[:name].split('(').first
+          }
+        end
+        const_set :HUMAN_TARGETS, human_targets
+      else
+        super
+      end
+    end
+
     protected
 
     def comparison_valid_for_target
       if !target.blank? && !valid_comparisons.include?(comparison)
         errors.add(:comparison, "\"#{human_comparison}\" is not valid for #{human_target}")
       end
-    end
-
-    HUMAN_TARGETS = {}.tap do |targets|
-      MetricFilterTarget.all.each { |target|
-        targets[target[:target]] = target[:name].split('(').first
-      }
     end
 
   end
