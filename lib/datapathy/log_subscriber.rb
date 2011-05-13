@@ -17,9 +17,16 @@ module Datapathy
       rt
     end
 
-    def query(event)
+    def request(event)
       self.class.runtime += event.duration
-      debug("Datapathy: %s (%.1fms) %s" % [event.payload[:name], event.duration, event.payload[:query]])
+      debug("  [%s] %s (%.3fms) %s" %
+            [
+              event.payload[:action].to_s.upcase,
+              event.payload[:href] || event.payload[:model].resource_name,
+              event.duration,
+              event.payload[:model] ? event.payload[:model].inspect : ""
+            ]
+           )
     end
 
   end

@@ -1,10 +1,9 @@
-require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
+require 'spec_helper'
 
 describe "Model.find_by_foo" do
 
   before do
-    @article = Article.create(:id => new_uuid,
-                              :title => "FooBar",
+    @article = Article.create(:title => "FooBar",
                               :text  => "Original text")
   end
 
@@ -13,11 +12,6 @@ describe "Model.find_by_foo" do
 
     article.text.should == "Original text"
   end
-
-  after do
-    test_adapter.clear!
-  end
-
 
 end
 

@@ -1,33 +1,42 @@
 require 'rubygems'
-require 'spec'
-
-# use relative AS if its available
-$LOAD_PATH.unshift(File.expand_path(File.join(File.dirname(__FILE__), '../../rails/activesupport/lib')))
+require 'rspec'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'datapathy'
 
+require 'faker'
+require 'machinist/datapathy'
+require 'ssbe/models/core'
+require 'ssbe/blueprints'
+
 require 'pp'
+require 'ap'
 
 # Requires supporting files with custom matchers and macros, etc,
 # in ./support/ and its subdirectories.
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each {|f| require f}
 
-module Helpers
-  require 'uuidtools'
-  def new_uuid
-    UUIDTools::UUID.random_create.to_s
+Datapathy.adapters[:memory] = Datapathy::Adapters::MemoryAdapter.new
+
+Datapathy.adapters[:ssbe] = Datapathy::Adapters::SsbeAdapter.new(:backend => 'ssbe.localhost',
+                                                                 :username => 'dev',
+                                                                 :password => 'dev')
+
+RSpec.configure do |config|
+
+  config.before :each do
+    if example.metadata[:adapter] == :memory
+      Datapathy.adapter = Datapathy.adapters[:memory]
+      api = Client.create(:name => "API", :longname => "Absolute Performance", :active => true)
+      make_metric_filter_targets
+    end
   end
 
-  def test_adapter
-    Datapathy.default_adapter
+  config.after :each do
+    Datapathy.adapters[:memory].clear!
+    Datapathy.adapters[:default].clear!
   end
-end
-
-Spec::Runner.configure do |config|
-
-  config.include(Helpers)
-  config.include(Matchers)
 
 end
+
