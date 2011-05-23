@@ -1,3 +1,4 @@
+
 class Address
   include Datapathy::Model
   service_type :kernel
@@ -14,10 +15,6 @@ class Address
     @cache ||= all.to_a.map { |a| [a.href, a] }.inject({}){ |ha, (k,v)| ha[k] = v; ha }
 
     @cache[href]
-  end
-
-  def to_s
-    "#{name} <#{identifier}>"
   end
 
 end
