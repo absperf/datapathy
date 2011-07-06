@@ -6,11 +6,11 @@ Gem::Specification.new do |s|
   s.name        = "datapathy"
   s.version     = Datapathy::VERSION
   s.platform    = Gem::Platform::RUBY
-  s.authors     = ["TODO: Write your name"]
-  s.email       = ["TODO: Write your email address"]
+  s.authors     = ["Absolute Performance, Inc"]
+  s.email       = ["info@absolute-performance.com"]
   s.homepage    = ""
-  s.summary     = %q{TODO: Write a gem summary}
-  s.description = %q{TODO: Write a gem description}
+  s.summary     = %q{The stupid-simple ORM.}
+  s.description = %q{The stupid-simple ORM.}
 
   s.rubyforge_project = "datapathy"
 

@@ -10,6 +10,7 @@ class Account
   links_to_collection :clients_by_role,      :class_name => "Client"
   links_to_collection :clients_by_privilege, :class_name => "Client"
   links_to_collection :addresses
+  links_to_collection :visible_addresses,    :class_name => "Address"
   links_to_collection :role_assignments
   links_to :preferred_client, :class_name => "Client"
   links_to :initial_client,   :class_name => "Client"
