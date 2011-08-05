@@ -17,4 +17,13 @@ class Metric
     host.metrics.create(attrs)
   end
 
+  def self.discover(client_name, host_name, metric_name)
+    http =
+    uri = ServiceDescriptor.discover(:measurements, "DiscoverMetrics") + "?clientname=#{client_name}&hostname=#{host_name}&metric_type=#{metric_name}"
+    response = Datapathy.adapters[:ssbe].http.resource(uri).get(:accept => 'application/vnd.absperf.ssmj1+json')
+
+    metrics = JSON.parse(response.body).map { |metric| Metric.new(metric) }
+
+    metrics.any? ? metrics.first : nil
+  end
 end
