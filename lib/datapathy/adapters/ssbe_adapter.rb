@@ -117,7 +117,7 @@ module Datapathy::Adapters
 
     def default_headers
       @default_headers ||= {
-        :accept => 'application/vnd.absperf.sskj1+json, application/vnd.absperf.ssmj1+json, application/vnd.absperf.ssej1+json, application/vnd.absperf.sscj1+json'
+        :accept => 'application/vnd.absperf.sskj1+json, application/vnd.absperf.ssmj1+json, application/vnd.absperf.sscj1+json, application/vnd.absperf.ssaj1+json, application/vnd.absperf.sswj1+json'
       }
     end
 
