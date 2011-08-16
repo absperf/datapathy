@@ -70,3 +70,16 @@ Address.blueprint do
   delivery_method "email"
   identifier  { Faker::Internet.email(name) }
 end
+
+EscalationDefinition.blueprint do
+  filter { MetricFilter.make }
+  client        { parent_client }
+  active        true
+end
+
+Escalation.blueprint do
+  escalation_definition    { EscalationDefinition.make }
+  current_escalation_state { :new }
+  current_status           { Escalation::Crit }
+  current_step             { 1 }
+end
