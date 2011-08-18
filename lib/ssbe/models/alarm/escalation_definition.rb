@@ -8,7 +8,6 @@ class EscalationDefinition
 
   links_to :client
   links_to :filter, :class_name => 'MetricFilter'
-  links_to_collection :escalations
 
   def self.make(*args)
     attrs = plan(*args)

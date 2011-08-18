@@ -83,3 +83,15 @@ Escalation.blueprint do
   current_status           { Escalation::Crit }
   current_step             { 1 }
 end
+
+Message.blueprint do
+  escalation       { Escalation.make }
+  metric           { Metric.make }
+  alert_count      { rand(10).to_i }
+  message          { Faker::Lorem.sentence }
+  status           { Escalation::Crit }
+  min_metric_value { rand.to_f }
+  max_metric_value { rand(100).to_f }
+  first_seen_at    { Time.now }
+  last_seen_at     { Time.now }
+end

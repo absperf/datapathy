@@ -6,6 +6,7 @@ class Escalation
 
   persists :current_status, :current_step, :current_escalation_state
   links_to :escalation_definition
+  links_to_collection :messages
 
   Ok   = 0
   Warn = 1
@@ -13,8 +14,6 @@ class Escalation
 
   def self.make(*args)
     attrs = plan(*args)
-    #escalation_definition = attrs[:escalation_definition]
-    #escalation_definition.escalations.create(attrs)
     create(attrs)
   end
 end
