@@ -95,3 +95,8 @@ Message.blueprint do
   first_seen_at    { Time.now }
   last_seen_at     { Time.now }
 end
+
+Agent.blueprint do
+  host { Host.make }
+  client { parent_client }
+end

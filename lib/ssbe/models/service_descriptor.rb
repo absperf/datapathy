@@ -110,6 +110,11 @@ class ServiceDescriptor
         :name                  => :webwalk,
         :service_type          => "http://systemshepherd.com/services/webwalk",
         :mime_type             => "application/vnd.absperf.sswj1+json"
+      ),
+      ServiceIdentifier.new(
+        :name                  => :operations,
+        :service_type          => "http://systemshepherd.com/services/operations",
+        :mime_type             => "application/vnd.absperf.sskj1+json"
       )
     ].freeze
   end
