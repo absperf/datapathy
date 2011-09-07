@@ -77,37 +77,45 @@ class ServiceDescriptor
 
     IDENTIFIERS = [
       ServiceIdentifier.new(
-      :name                  => :kernel,
-      :service_type          => "http://systemshepherd.com/services/kernel",
-      :mime_type             => "application/vnd.absperf.sskj1+json"
+        :name                  => :kernel,
+        :service_type          => "http://systemshepherd.com/services/kernel",
+        :mime_type             => "application/vnd.absperf.sskj1+json"
       ),
       ServiceIdentifier.new(
-      :name                  => :measurements,
-      :service_type          => "http://systemshepherd.com/services/measurements",
-      :mime_type             => "application/vnd.absperf.ssmj1+json"
+        :name                  => :measurements,
+        :service_type          => "http://systemshepherd.com/services/measurements",
+        :mime_type             => "application/vnd.absperf.ssmj1+json"
       ),
       ServiceIdentifier.new(
-      :name                  => :escalations,
-      :service_type          => "http://systemshepherd.com/services/escalations",
-      :mime_type             => "application/vnd.absperf.ssaj1+json"
+        :name                  => :escalations,
+        :service_type          => "http://systemshepherd.com/services/escalations",
+        :mime_type             => "application/vnd.absperf.ssaj1+json"
       ),
       ServiceIdentifier.new(
-      :name                  => :message_queues,
-      :service_type          => "http://systemshepherd.com/services/message-queues",
-      :mime_type             => "application/vnd.absperf.sskj1+json"
+        :name                  => :message_queues,
+        :service_type          => "http://systemshepherd.com/services/message-queues",
+        :mime_type             => "application/vnd.absperf.sskj1+json"
       ),
       ServiceIdentifier.new(
-      :name                  => :issues,
-      :service_type          => "http://systemshepherd.com/services/issues",
-      :mime_type             => "application/vnd.absperf.ssj1+json"
+        :name                  => :issues,
+        :service_type          => "http://systemshepherd.com/services/issues",
+        :mime_type             => "application/vnd.absperf.ssj1+json"
       ),
       ServiceIdentifier.new(
-      :name                  => :configurator,
-      :service_type          => "http://systemshepherd.com/services/configurator",
-      :mime_type             => "application/vnd.absperf.sscj1+json"
+        :name                  => :configurator,
+        :service_type          => "http://systemshepherd.com/services/configurator",
+        :mime_type             => "application/vnd.absperf.sscj1+json"
+      ),
+      ServiceIdentifier.new(
+        :name                  => :webwalk,
+        :service_type          => "http://systemshepherd.com/services/webwalk",
+        :mime_type             => "application/vnd.absperf.sswj1+json"
+      ),
+      ServiceIdentifier.new(
+        :name                  => :operations,
+        :service_type          => "http://systemshepherd.com/services/operations",
+        :mime_type             => "application/vnd.absperf.sskj1+json"
       )
     ].freeze
-
   end
-
 end

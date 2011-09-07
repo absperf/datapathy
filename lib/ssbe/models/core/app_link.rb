@@ -9,5 +9,9 @@ class AppLink
     uri = ServiceDescriptor.discover(:kernel, "RegisterApplicationLink")
     self.create(attrs.merge(:href => uri))
   end
+
+  def self.for_navbar
+    all
+  end
 end
 

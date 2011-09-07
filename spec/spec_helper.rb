@@ -8,6 +8,7 @@ require 'datapathy'
 require 'faker'
 require 'machinist/datapathy'
 require 'ssbe/models/core'
+require 'ssbe/models/alarm'
 require 'ssbe/blueprints'
 
 require 'pp'

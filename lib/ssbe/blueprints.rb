@@ -70,3 +70,33 @@ Address.blueprint do
   delivery_method "email"
   identifier  { Faker::Internet.email(name) }
 end
+
+EscalationDefinition.blueprint do
+  filter { MetricFilter.make }
+  client        { parent_client }
+  active        true
+end
+
+Escalation.blueprint do
+  escalation_definition    { EscalationDefinition.make }
+  current_escalation_state { :new }
+  current_status           { Escalation::Crit }
+  current_step             { 1 }
+end
+
+Message.blueprint do
+  escalation       { Escalation.make }
+  metric           { Metric.make }
+  alert_count      { rand(10).to_i }
+  message          { Faker::Lorem.sentence }
+  status           { Escalation::Crit }
+  min_metric_value { rand.to_f }
+  max_metric_value { rand(100).to_f }
+  first_seen_at    { Time.now }
+  last_seen_at     { Time.now }
+end
+
+Agent.blueprint do
+  host { Host.make }
+  client { parent_client }
+end
