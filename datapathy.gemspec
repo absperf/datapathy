@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "datapathy"
 
-  rails_version = "~> 3.0.7"
+  rails_version = ">= 3.0.7"
 
   s.add_dependency "activesupport", rails_version
   s.add_dependency "activemodel",   rails_version
