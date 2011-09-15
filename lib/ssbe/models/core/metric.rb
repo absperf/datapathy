@@ -4,9 +4,10 @@ class Metric
 
   service_type :measurements
 
-  persists :path, :metric_type, :active, :status, :value, :historical_observations_href, :active?
+  persists :metric_type, :active, :value, :historical_observations_href, :active?
 
   links_to :host
+  links_to :status
   #links_to :metric_type  # NOTE: collides with {metric_type} hash embedded in metric document
   links_to_collection :observations
   links_to_collection :matching_filters, :class_name => "MetricFilter"
