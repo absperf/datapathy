@@ -4,7 +4,7 @@ class Metric
 
   service_type :measurements
 
-  persists :metric_type, :active, :value, :historical_observations_href, :active?
+  persists :path, :status, :metric_type, :active, :value, :historical_observations_href, :active?
 
   links_to :host
   links_to :status
