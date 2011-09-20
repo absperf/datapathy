@@ -2,6 +2,7 @@
 # only require the parts of activesupport we want
 require 'active_support/inflector'
 require 'active_support/core_ext/string/inflections'
+require 'datapathy/inflections'
 require 'logger'
 
 module Datapathy
