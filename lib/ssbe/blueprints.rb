@@ -11,7 +11,7 @@ end
 
 Client.blueprint(:parent_client) do
   name        { "#{application_name}test" }
-  longname    { "Alarm Test Client" }
+  longname    { "#{application_name.titleize} Test Client" }
   active      { true }
   parent      { Client::API }
 end
@@ -22,7 +22,7 @@ end
 
 Client.blueprint(:child_client) do
   name        { "#{application_name}testchild" }
-  longname    { "Alarm Test Child Client" }
+  longname    { "#{application_name.titleize} Test Child Client" }
   active      { true }
   parent      { parent_client }
 end
@@ -33,7 +33,7 @@ end
 
 Client.blueprint(:other_client) do
   name        { "#{application_name}testother" }
-  longname    { "Alarm Test Other Client" }
+  longname    { "#{application_name.titleize} Test Other Client" }
   active      { true }
   parent      { Client::API }
 end
@@ -63,7 +63,7 @@ end
 
 MetricFilter.blueprint do
   client      { parent_client }
-  purpose     { "AlarmTest" }
+  purpose     { "#{application_name.titleize}Test" }
   any_or_all  { "all" }
   criteria    { [{:target => "Hostname", :comparison => "is", :pattern => "test"}] }
 end
