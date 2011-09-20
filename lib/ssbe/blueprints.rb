@@ -1,3 +1,6 @@
+def application_name
+  Rails.root.basename.to_s
+end
 
 Client.blueprint do
   longname    { Faker::Company.name }
@@ -7,7 +10,7 @@ Client.blueprint do
 end
 
 Client.blueprint(:parent_client) do
-  name        { "alarmtest" }
+  name        { "#{application_name}test" }
   longname    { "Alarm Test Client" }
   active      { true }
   parent      { Client::API }
@@ -18,7 +21,7 @@ def parent_client
 end
 
 Client.blueprint(:child_client) do
-  name        { "alarmtestchild" }
+  name        { "#{application_name}testchild" }
   longname    { "Alarm Test Child Client" }
   active      { true }
   parent      { parent_client }
@@ -29,7 +32,7 @@ def child_client
 end
 
 Client.blueprint(:other_client) do
-  name        { "alarmtestother" }
+  name        { "#{application_name}testother" }
   longname    { "Alarm Test Other Client" }
   active      { true }
   parent      { Client::API }
