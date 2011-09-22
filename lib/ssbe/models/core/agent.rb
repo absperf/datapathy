@@ -7,4 +7,6 @@ class Agent
   links_to :account
   links_to :client
   links_to :host
+
+  persists :configuration_href
 end
