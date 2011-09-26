@@ -1,5 +1,5 @@
 def application_name
-  Rails.root.basename.to_s
+  Rails.root.basename.to_s.gsub(/-/, '_')
 end
 
 Client.blueprint do
