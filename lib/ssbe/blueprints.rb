@@ -17,7 +17,7 @@ Client.blueprint(:parent_client) do
 end
 
 def parent_client
-  @parent_client = Client.find_or_create_by_name Client.plan(:parent_client)
+  @parent_client ||= Client.find_or_create_by_name Client.plan(:parent_client).merge(:parent_href => Client::API.href)
 end
 
 Client.blueprint(:child_client) do
@@ -28,7 +28,7 @@ Client.blueprint(:child_client) do
 end
 
 def child_client
-  @child_client = Client.find_or_create_by_name Client.plan(:child_client)
+  @child_client ||= Client.find_or_create_by_name Client.plan(:child_client).merge(:parent_href => parent_client.href)
 end
 
 Client.blueprint(:other_client) do
@@ -39,7 +39,7 @@ Client.blueprint(:other_client) do
 end
 
 def other_client
-  @other_client = Client.find_or_create_by_name Client.plan(:other_client)
+  @other_client ||= Client.find_or_create_by_name Client.plan(:other_client).merge(:parent_href => Client::API.href)
 end
 
 Host.blueprint do
