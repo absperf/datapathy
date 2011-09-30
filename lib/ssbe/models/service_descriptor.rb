@@ -112,6 +112,11 @@ class ServiceDescriptor
         :mime_type             => "application/vnd.absperf.sswj1+json"
       ),
       ServiceIdentifier.new(
+        :name                  => :analytics,
+        :service_type          => "http://systemshepherd.com/services/analytics",
+        :mime_type             => "application/vnd.absperf.ssmj1+json"
+      ),
+      ServiceIdentifier.new(
         :name                  => :operations,
         :service_type          => "http://systemshepherd.com/services/operations",
         :mime_type             => "application/vnd.absperf.sskj1+json"
