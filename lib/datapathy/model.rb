@@ -12,6 +12,7 @@ require 'datapathy/model/crud'
 require 'datapathy/model/discovery'
 require 'datapathy/model/dynamic_finders'
 require 'datapathy/model/links'
+require 'datapathy/model/multi_finder'
 
 module Datapathy::Model
   extend ActiveSupport::Concern

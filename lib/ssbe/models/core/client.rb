@@ -1,5 +1,6 @@
 class Client
   include Datapathy::Model
+  include Datapathy::Model::MultiFinder
 
   service_type :kernel
   resource_name :AllClients

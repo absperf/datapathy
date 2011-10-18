@@ -1,6 +1,8 @@
 
 class MetricFilter
   include Datapathy::Model
+  include Datapathy::Model::MultiFinder
+
   service_type  :measurements
   resource_name :AllMetricFilters
 
