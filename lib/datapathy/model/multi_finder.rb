@@ -31,7 +31,7 @@ module Datapathy::Model
       def in(*args)
         case args.length
         when 1
-          model_hrefs = [args.first].flatten
+          model_hrefs = [args.first]
         when 2
           if args.first.kind_of? String
             model_hrefs = args
@@ -42,21 +42,29 @@ module Datapathy::Model
           model_hrefs = args
         end
 
-        collection = Datapathy::Collection.new(self)
-        href = collection.href
-        regex = /^#{href}\//
+        model_hrefs = model_hrefs.flatten.uniq
 
-        ids = model_hrefs.flatten.uniq.map do |model_href|
-          if model_href =~ regex
-            model_href.gsub(regex, '')
-          else
-            model_href.split(/\//).last
-          end
-        end.compact.join(',')
+        if model_hrefs.count == 0
+          {}
+        elsif model_hrefs.count == 1
+          ({}).tap { |hash| hash[model_hrefs.first] = self.at(model_hrefs.first) }
+        else
+          collection = Datapathy::Collection.new(self)
+          href = collection.href
+          regex = /^#{href}\//
 
-        collection.href = Addressable::URI.parse(href)
-        collection.href.query_values = {:ids => ids}
-        collection.inject({}) { |hash, model| hash.merge(model.href => model) }
+          ids = model_hrefs.map do |model_href|
+            if model_href =~ regex
+              model_href.gsub(regex, '')
+            else
+              model_href.split(/\//).last
+            end
+          end.compact.join(',')
+
+          collection.href = Addressable::URI.parse(href)
+          collection.href.query_values = {:ids => ids}
+          collection.inject({}) { |hash, model| hash.merge(model.href => model) }
+        end
       end
     end
   end
