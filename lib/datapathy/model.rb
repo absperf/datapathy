@@ -13,6 +13,7 @@ require 'datapathy/model/discovery'
 require 'datapathy/model/dynamic_finders'
 require 'datapathy/model/links'
 require 'datapathy/model/multi_finder'
+require 'datapathy/model/access_control'
 
 module Datapathy::Model
   extend ActiveSupport::Concern

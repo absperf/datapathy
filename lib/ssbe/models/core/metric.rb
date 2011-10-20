@@ -1,6 +1,7 @@
 
 class Metric
   include Datapathy::Model
+  include Datapathy::Model::AccessControl
 
   service_type :measurements
 
@@ -28,24 +29,4 @@ class Metric
     metrics.any? ? metrics.first : nil
   end
 
-  def visible_to?(account)
-    account.has_privilege_at?(self.class.view_privilege, self.host.client.href)
-  end
-
-  class << self
-    def privilege_name
-      @privilege_name ||= self.name.underscore
-    end
-
-    %w[view create modify].each do |action|
-      class_eval <<-RUBY, __FILE__, __LINE__
-        def #{action}_privilege_name
-          @#{action}_privilege_name ||= "#{action}_\#{privilege_name}"
-        end
-        def #{action}_privilege
-          @#{action}_privilege ||= Privilege[#{action}_privilege_name]
-        end
-      RUBY
-    end
-  end
 end
