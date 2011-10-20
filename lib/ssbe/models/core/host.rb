@@ -1,8 +1,10 @@
 
 class Host
   include Datapathy::Model
+  include Datapathy::Model::MultiFinder
 
   service_type :measurements
+  resource_name :AllHosts
 
   persists :name, :active, :tags
 
