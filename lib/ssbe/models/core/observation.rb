@@ -1,5 +1,6 @@
 class Observation
   include Datapathy::Model
+  include Datapathy::Model::MultiFinder
 
   service_type :measurements
 
