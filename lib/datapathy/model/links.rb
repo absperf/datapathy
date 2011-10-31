@@ -35,7 +35,12 @@ module Datapathy::Model
                 param_name = params.model.to_s.underscore.singularize + "_href"
                 params = {param_name => params.href}
               end
-              @#{name} ||= #{class_name}.#{lookup_method}(#{link_name}, params)
+
+              if params.any?
+                #{class_name}.#{lookup_method}(#{link_name}, params)
+              else
+                @#{name} ||= #{class_name}.#{lookup_method}(#{link_name})
+              end
             end
           end
         CODE
