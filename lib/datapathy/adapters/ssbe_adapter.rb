@@ -8,15 +8,14 @@ require 'ssbe/models/service_descriptor'
 require 'ssbe/models/resource_descriptor'
 
 module Datapathy::Adapters
-
   class SsbeAdapter < Datapathy::Adapters::AbstractAdapter
-
-    attr_reader :http, :backend
+    attr_reader :http, :backend, :protocol
 
     def initialize(options = {})
       super
 
       @backend = @options[:backend]
+      @protocol = @options[:protocol] || 'http'
       @username, @password = @options[:username], @options[:password]
 
       @http = Resourceful::HttpAccessor.new
@@ -74,7 +73,7 @@ module Datapathy::Adapters
     end
 
     def services_uri
-      @services_uri ||= "http://core.#{backend}/service_descriptors"
+      @services_uri ||= "#{protocol}://core.#{backend}/service_descriptors"
     end
 
     protected
