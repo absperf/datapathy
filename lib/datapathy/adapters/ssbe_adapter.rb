@@ -9,13 +9,12 @@ require 'ssbe/models/resource_descriptor'
 
 module Datapathy::Adapters
   class SsbeAdapter < Datapathy::Adapters::AbstractAdapter
-    attr_reader :http, :backend, :protocol
+    attr_reader :http, :backend
 
     def initialize(options = {})
       super
 
       @backend = @options[:backend]
-      @protocol = @options[:protocol] || 'http'
       @username, @password = @options[:username], @options[:password]
 
       @http = Resourceful::HttpAccessor.new
@@ -73,7 +72,7 @@ module Datapathy::Adapters
     end
 
     def services_uri
-      @services_uri ||= "#{protocol}://core.#{backend}/service_descriptors"
+      @services_uri ||= "http://core.#{backend}/service_descriptors"
     end
 
     protected
@@ -98,6 +97,12 @@ module Datapathy::Adapters
             end
 
       raise "Could not identify a location to look for #{model_or_collection}" unless uri
+
+      if uri.is_a? Addressable::URI
+        uri.scheme = 'http'
+      else
+        uri.gsub!(/^https:/, 'http:')
+      end
 
       http.resource(uri, default_headers)
     end
