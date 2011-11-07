@@ -20,7 +20,6 @@ class Metric
   end
 
   def self.discover(client_name, host_name, metric_name)
-    http =
     uri = ServiceDescriptor.discover(:measurements, "DiscoverMetrics") + "?clientname=#{CGI.escape client_name}&hostname=#{CGI.escape host_name}&metric_type=#{CGI.escape metric_name}"
     response = Datapathy.adapters[:ssbe].http.resource(uri).get(:accept => 'application/vnd.absperf.ssmj1+json')
 
@@ -29,4 +28,9 @@ class Metric
     metrics.any? ? metrics.first : nil
   end
 
+  def matching_filters_for_purpose(purpose)
+    uri = self.matching_filters_href + "?purpose=#{CGI.escape purpose}"
+    response = Datapathy.adapters[:ssbe].http.resource(uri).get(:accept => 'application/vnd.absperf.ssmj1+json')
+    JSON.parse(response.body)['items'].map { |metric_filter| MetricFilter.new(metric_filter) }
+  end
 end
