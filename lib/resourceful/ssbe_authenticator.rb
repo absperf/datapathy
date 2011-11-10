@@ -1,9 +1,7 @@
 module Resourceful
-
   class SsbeAuthenticator
     require 'httpauth'
     require 'addressable/uri'
-
 
     attr_reader :username, :password, :realm, :domain, :challenge
 
@@ -15,18 +13,19 @@ module Resourceful
 
     def update_credentials(challenge_response)
       @domain = Addressable::URI.parse(challenge_response.uri).host
-      @challenge = HTTPAuth::Digest::Challenge.from_header(challenge_response.header['WWW-Authenticate'].join(", "))
+      @challenge = get_challenge_from_header(challenge_response.header['WWW-Authenticate'])
+    end
+
+    def get_challenge_from_header(header)
+      header = header.join(', ')
+      challenge = HTTPAuth::Digest::Challenge.from_header(get_digest_auth_challenge_header(header))
+    rescue HTTPAuth::UnwellformedHeader
+      false
     end
 
     def valid_for?(challenge_response)
       return false unless challenge_header = challenge_response.header['WWW-Authenticate']
-      begin
-        challenge = HTTPAuth::Digest::Challenge.from_header(challenge_header.first)
-      rescue HTTPAuth::UnwellformedHeader
-        return false
-      end
-      #challenge.realm == @realm
-      true
+      !!get_challenge_from_header(challenge_header)
     end
 
     def can_handle?(request)
@@ -38,14 +37,15 @@ module Resourceful
     end
 
     def credentials_for(request)
-      HTTPAuth::Digest::Credentials.from_challenge(@challenge, 
+      HTTPAuth::Digest::Credentials.from_challenge(@challenge,
                                                    :username => @username,
                                                    :password => @password,
                                                    :method   => request.method.to_s.upcase,
                                                    :uri      => Addressable::URI.parse(request.uri).path).to_header
     end
 
+    def get_digest_auth_challenge_header(header)
+      header.split(',').map(&:strip).reject { |part| part =~ /^Basic/ }.join(', ')
+    end
   end
-
 end
-
