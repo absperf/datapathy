@@ -24,8 +24,8 @@ class Account
 
   def md5_auth_credentials
     @md5_auth_credentials ||=
-      Datapathy.default_adapter.http.
-        resource(authentication_credentials_href).
+      Datapathy.adapters[:ssbe].http.
+        resource(self[:authentication_credentials_href]).
         get(:accept => 'application/prs.md5-hexdigest-auth-creds').body
   end
 
