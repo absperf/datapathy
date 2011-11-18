@@ -16,10 +16,11 @@ class Account
   links_to :initial_client,   :class_name => "Client"
   links_to :initial_role,     :class_name => "Role"
 
-  def self.by_login(login, reload = nil)
-    @cache = nil if reload
-    @cache ||= all.to_a.map { |a| [a.login, a] }.inject({}){ |ha, (k,v)| ha[k] = v; ha }
-    @cache[login]
+  def self.by_login(login)
+    uri = ServiceDescriptor.discover(:kernel, "AllAccounts") + "?login=#{CGI.escape login}"
+    response = Datapathy.adapters[:ssbe].http.resource(uri).get(:accept => 'application/vnd.absperf.sskj1+json')
+    accounts = JSON.parse(response.body)['items'].map { |account| Account.new(account) }
+    accounts.any? ? accounts.first : nil
   end
 
   def md5_auth_credentials
