@@ -2,8 +2,10 @@
 class Metric
   include Datapathy::Model
   include Datapathy::Model::AccessControl
+  include Datapathy::Model::MultiFinder
 
   service_type :measurements
+  resource_name :AllMetrics
 
   persists :path, :status, :metric_type, :active, :value, :historical_observations_href, :active?
 
