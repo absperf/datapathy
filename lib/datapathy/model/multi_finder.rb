@@ -59,7 +59,7 @@ module Datapathy::Model
             else
               model_href.split(/\//).last
             end
-          end.compact.join(',')
+          end.compact.sort.join(',')
 
           collection.href = Addressable::URI.parse(href)
           collection.href.query_values = {:ids => ids}
