@@ -59,7 +59,6 @@ require 'datapathy/collection'
 require 'datapathy/adapters/abstract_adapter'
 require 'datapathy/adapters/memory_adapter'
 require 'datapathy/adapters/ssbe_adapter'
-require 'datapathy/adapters/ssbe_vcr_adapter'
 
 if defined?(Rails)
   require 'datapathy/railtie'
