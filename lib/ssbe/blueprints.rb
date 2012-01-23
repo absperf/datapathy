@@ -42,11 +42,16 @@ def other_client
   @other_client ||= Client.find_or_create_by_name Client.plan(:other_client).merge(:parent_href => Client::API.href)
 end
 
-Sham.hostname { "example-" + (1..10).map { ('a'..'z').to_a.rand }.join + '.com' }
+Sham.hostname do
+  letters = ('a'..'z').to_a
+  "example-" + (1..10).map do
+    letters[rand(letters.length)]
+  end.join + '.com'
+end
 
 Host.blueprint do
   client { parent_client }
-  name { Sham.hostname }
+  name { defined?(VCR) ? Sham.hostname : "example-#{Time.now.to_i}.com" }
 end
 
 MetricType.blueprint do
