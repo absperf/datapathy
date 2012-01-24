@@ -51,7 +51,7 @@ end
 
 Host.blueprint do
   client { parent_client }
-  name { defined?(VCR) ? Sham.hostname : "example-#{Time.now.to_i}.com" }
+  name { defined?(VCR) ? Sham.hostname : "example-#{Time.now.to_f}.com" }
 end
 
 MetricType.blueprint do
