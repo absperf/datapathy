@@ -17,7 +17,11 @@ class Host
     client.hosts.create(attrs)
   end
 
+  def active?
+    !![:active?]
+  end
+
   def inactive?
-    !active
+    !active?
   end
 end
