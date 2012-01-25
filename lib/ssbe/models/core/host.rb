@@ -16,4 +16,8 @@ class Host
     client = attrs[:client]
     client.hosts.create(attrs)
   end
+
+  def inactive?
+    !active
+  end
 end
