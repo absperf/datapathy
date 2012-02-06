@@ -2,18 +2,16 @@ module Datapathy::Model
   module AccessControl
     extend ActiveSupport::Concern
 
-    module InstanceMethods
-      def visible_to?(account, client_href)
-        account.has_privilege_at?(self.class.view_privilege, client_href)
-      end
+    def visible_to?(account, client_href)
+      account.has_privilege_at?(self.class.view_privilege, client_href)
+    end
 
-      def modifiable_by?(account, client_href)
-        account.has_privilege_at?(self.class.modify_privilege, client_href)
-      end
+    def modifiable_by?(account, client_href)
+      account.has_privilege_at?(self.class.modify_privilege, client_href)
+    end
 
-      def creatable_by?(account, client_href)
-        account.has_privilege_at?(self.class.create_privilege, client_href)
-      end
+    def creatable_by?(account, client_href)
+      account.has_privilege_at?(self.class.create_privilege, client_href)
     end
 
     module ClassMethods
