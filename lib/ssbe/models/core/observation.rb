@@ -9,7 +9,7 @@ class Observation
   links_to :host
   links_to :agent
 
-  def self.in(hrefs, start_interval, end_interval)
+  def self.in(hrefs, start_time, end_time)
     regex = /\D+(\d+)/
     ids = hrefs.map do |model_href|
       if model_href =~ regex
@@ -20,7 +20,7 @@ class Observation
     end.compact.join(',')
 
     href = Addressable::URI.parse(ServiceDescriptor.discover(:measurements, "MultipleObservations"))
-    href.query_values = {:metric_ids => ids, :start => start_interval, :end => end_interval}
+    href.query_values = {:metric_ids => ids, :start => start_time.iso8601, :end => end_time.iso8601}
     response = Datapathy.adapters[:ssbe].http.resource(href).get(:accept => 'application/vnd.absperf.ssmj1+json')
 
     JSON.parse(response.body).map { |observation| observation.with_indifferent_access }
