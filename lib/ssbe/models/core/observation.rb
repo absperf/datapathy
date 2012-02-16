@@ -18,8 +18,10 @@ class Observation
         model_href.split(/\//).last
       end
     end.compact.join(',')
-    uri = "#{ServiceDescriptor.discover(:measurements, "MultipleObservations")}?metric_ids=#{ids}&start=#{start_interval}&end=#{end_interval}"
-    response = Datapathy.adapters[:ssbe].http.resource(uri).get(:accept => 'application/vnd.absperf.ssmj1+json')
+
+    href = Addressable::URI.parse(ServiceDescriptor.discover(:measurements, "MultipleObservations"))
+    href.query_values = {:metric_ids => ids, :start => start_interval, :end => end_interval}
+    response = Datapathy.adapters[:ssbe].http.resource(href).get(:accept => 'application/vnd.absperf.ssmj1+json')
 
     JSON.parse(response.body).map { |observation| observation.with_indifferent_access }
   end
