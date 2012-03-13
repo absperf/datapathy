@@ -16,4 +16,12 @@ class Host
     client = attrs[:client]
     client.hosts.create(attrs)
   end
+
+  def active?
+    attributes[:active?] == 1
+  end
+
+  def inactive?
+    !active?
+  end
 end

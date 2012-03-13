@@ -1,5 +1,11 @@
 require 'active_support/concern'
-require 'active_support/core_ext/class/inheritable_attributes'
+
+if ActiveSupport::VERSION::STRING =~ /^3\.2\./
+  require 'active_support/core_ext/class/attribute'
+else
+  require 'active_support/core_ext/class/inheritable_attributes'
+end
+
 require 'active_support/core_ext/hash/indifferent_access'
 require 'active_support/core_ext/hash/slice'
 require 'active_support/core_ext/module/attribute_accessors'
