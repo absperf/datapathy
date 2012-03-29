@@ -125,6 +125,10 @@ module Datapathy::Model
     serializable_hash(*a)
   end
 
+  def marked_for_destruction?
+    false
+  end
+
   module ClassMethods
 
     def persists(*args)
