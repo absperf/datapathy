@@ -51,7 +51,7 @@ end
 
 Host.blueprint do
   client { parent_client }
-  name { defined?(VCR) ? Sham.hostname : "example-#{Time.now.to_f}-#{10.times.map { 1 + rand(20) }}.com" }
+  name { "example-#{Time.now.to_f}-#{10.times.map { 1 + rand(20) }.join}.com" }
 end
 
 MetricType.blueprint do
