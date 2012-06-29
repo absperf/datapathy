@@ -7,6 +7,7 @@ class MetricFilter
   resource_name :AllMetricFilters
 
   persists :purpose, :any_or_all, :criteria
+  define_attribute_accessor :hosts_href
 
   links_to :client
   links_to_collection :metrics

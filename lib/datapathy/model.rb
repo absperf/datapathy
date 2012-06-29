@@ -135,9 +135,13 @@ module Datapathy::Model
       attributes.push(*args)
       args.each do |name|
         name = name.to_s.gsub(/\?\Z/, '')
-        define_getter_method(name)
-        define_setter_method(name)
+        define_attribute_accessor(name)
       end
+    end
+
+    def define_attribute_accessor(name)
+      define_getter_method(name)
+      define_setter_method(name)
     end
 
     def define_getter_method(name)
