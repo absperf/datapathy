@@ -71,6 +71,10 @@ module Datapathy::Adapters
       end
     end
 
+    def delete(model)
+      resource_for(model).delete
+    end
+
     def services_uri
       @services_uri ||= "http://core.#{backend}/service_descriptors"
     end
