@@ -7,7 +7,7 @@ class Metric
   service_type :measurements
   resource_name :AllMetrics
 
-  persists :path, :status, :metric_type, :active, :value, :historical_observations_href, :active?
+  persists :path, :stereotype, :status, :metric_type, :active, :value, :historical_observations_href, :active?
 
   links_to :host
   links_to :status
