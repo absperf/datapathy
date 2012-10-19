@@ -11,6 +11,7 @@ class MetricFilter
 
   links_to :client
   links_to_collection :metrics
+  links_to_collection :ignored_metrics
 
   validates_presence_of :client_href
   validates_presence_of :purpose, :any_or_all
