@@ -17,6 +17,12 @@ class Host
     client.hosts.create(attrs)
   end
 
+  def all_metrics
+    coll = Datapathy::Collection.new(Metric)
+    coll.href = attributes[:metrics_href]+'?show=all'
+    coll.select({})
+  end
+
   def active_metrics
     coll = Datapathy::Collection.new(Metric)
     coll.href = attributes[:metrics_href]+'?show=current'
