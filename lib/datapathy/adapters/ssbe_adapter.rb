@@ -72,6 +72,7 @@ module Datapathy::Adapters
     end
 
     def delete(model)
+      @http.cache_manager = Resourceful::InMemoryCacheManager.new unless @options[:disable_cache]
       resource_for(model).delete
     end
 
