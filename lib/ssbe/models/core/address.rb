@@ -22,4 +22,8 @@ class Address
     "#{name} <#{identifier}>"
   end
 
+  def active?
+    attributes[:active?] == 1
+  end
+
 end
