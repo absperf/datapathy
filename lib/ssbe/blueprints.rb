@@ -74,7 +74,6 @@ Address.blueprint do
   name 'Test Address'
   delivery_method 'email'
   identifier 'test@test.com'
-  active true
 end
 
 EscalationDefinition.blueprint do
