@@ -30,7 +30,7 @@ class Host
   end
 
   def active?
-    attributes[:active?] == 1
+    attributes[:active?]
   end
 
   def inactive?

@@ -23,7 +23,7 @@ class Address
   end
 
   def active?
-    attributes[:active?] == 1
+    attributes[:active?]
   end
 
 end
