@@ -92,16 +92,6 @@ class ServiceDescriptor
         :mime_type             => "application/vnd.absperf.ssaj1+json"
       ),
       ServiceIdentifier.new(
-        :name                  => :message_queues,
-        :service_type          => "http://systemshepherd.com/services/message-queues",
-        :mime_type             => "application/vnd.absperf.sskj1+json"
-      ),
-      ServiceIdentifier.new(
-        :name                  => :issues,
-        :service_type          => "http://systemshepherd.com/services/issues",
-        :mime_type             => "application/vnd.absperf.ssj1+json"
-      ),
-      ServiceIdentifier.new(
         :name                  => :configurator,
         :service_type          => "http://systemshepherd.com/services/configurator",
         :mime_type             => "application/vnd.absperf.sscj1+json"
