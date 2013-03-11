@@ -89,7 +89,8 @@ module Datapathy::Adapters
     def serialize(resource, attrs_for_update = {})
       attrs = resource.attributes.dup.merge(attrs_for_update)
       attrs.delete_if { |k,v| v.nil? }
-      Yajl::Encoder.encode(attrs)
+
+      defined?(Jruby)? JSON.generate(attrs) : Yajl::Encoder.encode(attrs) 
     end
 
     def resource_for(model_or_collection)

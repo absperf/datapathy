@@ -20,7 +20,8 @@ Gem::Specification.new do |s|
   s.add_dependency "activemodel",   rails_version
   s.add_dependency "railties",      rails_version
   s.add_dependency "resourceful", "~> 1.0"
-  s.add_dependency "yajl-ruby"
+
+  s.add_dependency "yajl-ruby" unless defined?(JRuby)
 
   s.add_development_dependency "rspec", ">= 2.0"
   s.add_development_dependency "awesome_print"
