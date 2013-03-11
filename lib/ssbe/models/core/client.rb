@@ -32,4 +32,11 @@ class Client
     ].flatten.compact.uniq
   end
 
+  def active?
+    attributes[:active]
+  end
+
+  def inactive?
+    not active?
+  end
 end
