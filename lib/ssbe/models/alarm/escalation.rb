@@ -7,7 +7,8 @@ class Escalation
   persists :current_status, :current_step, :current_escalation_state
   links_to :escalation_definition
   links_to_collection :messages
-
+  links_to_collection :notification_results
+  
   Ok   = 0
   Warn = 1
   Crit = 2
