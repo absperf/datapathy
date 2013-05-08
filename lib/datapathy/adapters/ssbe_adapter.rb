@@ -90,7 +90,7 @@ module Datapathy::Adapters
       attrs = resource.attributes.dup.merge(attrs_for_update)
       attrs.delete_if { |k,v| v.nil? }
 
-      defined?(Jruby)? JSON.generate(attrs) : Yajl::Encoder.encode(attrs) 
+      defined?(JRuby)? JSON.generate(attrs) : Yajl::Encoder.encode(attrs) 
     end
 
     def resource_for(model_or_collection)
