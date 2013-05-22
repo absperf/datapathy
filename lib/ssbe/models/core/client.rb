@@ -8,6 +8,7 @@ class Client
   persists :name, :longname, :active
 
   links_to :parent
+  links_to :zendesk_integration
   links_to_collection :hosts
 
   def self.by_href(href, reload = nil)
