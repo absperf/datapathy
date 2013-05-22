@@ -1,4 +1,4 @@
-class ZendeskIntegraion
+class ZendeskIntegration
   include Datapathy::Model
 
   persists :active, :password, :subdomain, :username
