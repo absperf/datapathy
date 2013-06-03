@@ -1,7 +1,7 @@
 class ZendeskIntegration
   include Datapathy::Model
-
-  persists :active, :password, :subdomain, :username
+  persists :active, :token, :subdomain, :username
   links_to :client
-
 end
+
+ZendeskIntegration::Worker = ZendeskWorker
