@@ -4,4 +4,4 @@ class ZendeskIntegration
   links_to :client
 end
 
-ZendeskIntegration::Worker = ZendeskWorker
+ZendeskIntegration::Worker = ZendeskWorker if defined? ZendeskWorker
