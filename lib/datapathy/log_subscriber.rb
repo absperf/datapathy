@@ -22,7 +22,7 @@ module Datapathy
       debug("  [%s] %s (%.3fms) %s" %
             [
               event.payload[:action].to_s.upcase,
-              event.payload[:href] || event.payload[:model].resource_name,
+              event.payload[:href] || (event.payload[:model] ? event.payload[:model].resource_name : ""),
               event.duration,
               event.payload[:model] ? event.payload[:model].inspect : ""
             ]
