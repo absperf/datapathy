@@ -24,7 +24,6 @@ class Metric
   def name
     metric_type['path']
   end
-  alias path name
 
   def self.discover(client_name, host_name, metric_name)
     uri = ServiceDescriptor.discover(:measurements, "DiscoverMetrics") + "?clientname=#{CGI.escape client_name}&hostname=#{CGI.escape host_name}&metric_type=#{CGI.escape metric_name}"
