@@ -5,7 +5,7 @@ class Address
   service_type :kernel
   resource_name :AllAddresses
 
-  persists :name, :identifier, :delivery_method, :deleted_at
+  persists :name, :identifier, :community, :delivery_method, :deleted_at
 
   EMAIL_REGEXP = /[A-Z0-9._%+-]+@[A-Z0-9.-]+/i
 
